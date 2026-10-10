@@ -11,7 +11,7 @@ import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 // to the contact section.
 const SITE = {
     shapes: ['./assets/shapes/shape.svg'],
-    palette: ['#e8dcc8', '#c8ab8a', '#a08a7a', '#d6c2a8', '#7a5f50'],
+    palette: ['#f6f0e6', '#efe5d6', '#e3d4c0', '#d6c3ac', '#cdb9a3'],
     fragments: 4
 };
 
@@ -118,15 +118,15 @@ function createSparks() {
         positions[i * 3 + 2] = z;
 
         if (Math.random() < 0.6) {
-            // warm ivory glass dust
-            colors[i * 3] = 1.0;
-            colors[i * 3 + 1] = 0.93 + Math.random() * 0.06;
-            colors[i * 3 + 2] = 0.82 + Math.random() * 0.08;
+            // taupe glass dust
+            colors[i * 3] = 0.42 + Math.random() * 0.10;
+            colors[i * 3 + 1] = 0.33 + Math.random() * 0.08;
+            colors[i * 3 + 2] = 0.26 + Math.random() * 0.06;
         } else {
-            // soft taupe-beige accents (matches the background palette)
-            colors[i * 3] = 0.86 + Math.random() * 0.10;
-            colors[i * 3 + 1] = 0.74 + Math.random() * 0.10;
-            colors[i * 3 + 2] = 0.62 + Math.random() * 0.10;
+            // white glints
+            colors[i * 3] = 1.0;
+            colors[i * 3 + 1] = 0.98;
+            colors[i * 3 + 2] = 0.95;
         }
 
         sparkData.push({
@@ -146,8 +146,8 @@ function createSparks() {
         size: 0.025,
         vertexColors: true,
         transparent: true,
-        opacity: 0.40,
-        blending: THREE.AdditiveBlending,
+        opacity: 0.45,
+        blending: THREE.NormalBlending,
         depthWrite: false,
         map: createSparkTexture()
     });
@@ -160,7 +160,7 @@ function createSparks() {
 // It lights the glass without replacing the scrolling background.
 function createGlassEnvironment() {
     const studio = new THREE.Scene();
-    studio.background = new THREE.Color('#080b10');
+    studio.background = new THREE.Color('#1c1511');
     const panels = [
         [2.8, 8, -4, 2, 3, '#ffffff', 2.6],
         [0.65, 7, 3, 1, 2, '#fff1e0', 4.0],
@@ -203,8 +203,8 @@ function createGlassMaterial() {
         transmission: 1.0,
         thickness: 0.48,
         ior: 1.46,
-        attenuationColor: new THREE.Color('#fbf3e8'),
-        attenuationDistance: 8.0,
+        attenuationColor: new THREE.Color('#c9a882'),
+        attenuationDistance: 1.6,
         clearcoat: 0.65,
         clearcoatRoughness: 0.018,
         iridescence: 0.30,
@@ -628,11 +628,11 @@ function createGlassCard() {
     // blurs the background, and the bevelled rim still bends light like a lens.
     cardGlass = createGlassMaterial();
     cardGlass.side = THREE.FrontSide;
-    cardGlass.color.set('#9ea6b8');
+    cardGlass.color.set('#fffaf2');
     cardGlass.roughness = 0.34;
     cardGlass.thickness = 0.35;
-    cardGlass.attenuationColor.set('#2b241f');
-    cardGlass.attenuationDistance = 1.8;
+    cardGlass.attenuationColor.set('#efe4d4');
+    cardGlass.attenuationDistance = 4.0;
     cardGlass.clearcoat = 1.0;
     cardGlass.clearcoatRoughness = 0.14;
     cardGlass.iridescence = 0.18;
@@ -809,21 +809,22 @@ function createBackgroundShader() {
             float time = uTime * 0.065;
             vec3 primary = chapterColor(s);
             vec3 secondary = chapterColor(min(1.22, s + 0.18));
-            vec3 color = vec3(0.003, 0.005, 0.010);
+            // Light stage: an ivory-to-taupe wash, with soft tonal volumes and folds.
+            vec3 color = mix(primary, secondary, 0.35 + 0.35 * smoothstep(0.6, -0.6, uv.y));
 
-            // Two restrained volumes supply depth without washing out the black stage.
             vec2 haloUv = (uv - vec2(0.16 + 0.16 * sin(s * 4.0), 0.14)) * vec2(1.20, 1.8);
             float halo = exp(-dot(haloUv, haloUv) * 2.8);
             vec2 lowerUv = (uv + vec2(0.40, 0.30)) * vec2(1.6, 2.6);
-            color += primary * halo * 0.13;
-            color += secondary * exp(-dot(lowerUv, lowerUv) * 2.0) * 0.04;
+            color = mix(color, color * 1.08 + 0.02, halo * 0.6);
+            color *= 1.0 - exp(-dot(lowerUv, lowerUv) * 2.0) * 0.06;
 
             vec2 p = rotate2d(-0.24 + s * 0.65) * (uv - vec2(0.06, -0.08));
             p += uMouse * 0.018;
             p.x += 0.15 * sin(p.y * 2.8 + s * 4.8 + time * 0.3);
             p.y += 0.09 * cos(p.x * 3.1 - s * 3.8 - time * 0.2);
 
-            // Three broad sculptural folds, spaced apart, with thin polished edges.
+            // Three broad sculptural folds, like draped fabric, with fine taupe edges.
+            vec3 ink = vec3(0.16, 0.11, 0.08);
             for (int i = 0; i < 3; i++) {
                 float k = float(i);
                 vec2 q = p + vec2(0.0, 0.012 * sin(time + k));
@@ -834,26 +835,25 @@ function createBackgroundShader() {
                     + 0.022 * cos(angle * 3.0 - time);
                 float d = radius - contour;
                 float arc = smoothstep(-0.65, 0.65, sin(angle + k * 0.55 + s * 3.5));
-                vec3 tint = mix(primary, secondary, k * 0.38);
                 float body = exp(-pow(d * 25.0, 2.0));
                 float shoulder = exp(-pow((d + 0.018) * 13.0, 2.0));
-                color += tint * (body * 0.10 + shoulder * 0.025) * arc;
-                color += mix(tint, vec3(0.72, 0.82, 0.94), 0.20)
-                    * fineLine(d, 0.0008) * arc * (0.16 + uVelocity * 0.06);
+                color *= 1.0 - (body * 0.07 + shoulder * 0.025) * arc;
+                color += vec3(0.05, 0.045, 0.04) * exp(-pow((d - 0.012) * 30.0, 2.0)) * arc;
+                color = mix(color, ink, fineLine(d, 0.0008) * arc * (0.10 + uVelocity * 0.04));
             }
 
-            // A barely visible peripheral lattice: no scanning beam or dotted overlay.
             vec2 gridUv = rotate2d(-0.20 + s * 0.18) * uv + vec2(s * 0.08, s * 0.16);
             vec2 cell = abs(fract(gridUv * 10.0) - 0.5);
             float grid = max(fineLine((0.5 - cell.x) / 10.0, 0.0002), fineLine((0.5 - cell.y) / 10.0, 0.0002));
             float periphery = smoothstep(0.28, 0.80, length(uv));
-            color += primary * grid * periphery * 0.025;
+            color = mix(color, ink, grid * periphery * 0.035);
 
             float vignette = 1.0 - smoothstep(0.36, 1.20, length(uv * vec2(0.8, 1.0)));
-            color *= mix(0.25, 1.0, vignette);
+            color *= mix(0.84, 1.0, vignette);
             float textShade = (1.0 - smoothstep(-0.5, 0.1, uv.y)) * (1.0 - smoothstep(-0.25, 0.3, uv.x));
-            color *= 1.0 - textShade * 0.38;
-            gl_FragColor = vec4(color, 1.0);
+            color = mix(color, vec3(0.93, 0.89, 0.83), textShade * 0.18);
+            // Palette uniforms are linear: encode to sRGB so the hex colours show as chosen.
+            gl_FragColor = vec4(pow(max(color, 0.0), vec3(1.0 / 2.2)), 1.0);
         }
     `;
 
@@ -1223,7 +1223,7 @@ function init() {
     splitTitlesIntoLines();
     fitTitles();
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#000000');
+    scene.background = new THREE.Color('#f4ede2');
     scene.fog = new THREE.FogExp2('#000000', 0.01);
 
     camera = new THREE.PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100);

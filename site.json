@@ -4,14 +4,14 @@
   "meta_description": "Awrabaya habille les femmes de vêtements mastour élégants et confortables, à petits prix.",
   "email": "contact.awrabaya@gmail.com",
   "lang": "fr",
-  "shape": "sources/awrabaya-a.svg",
+  "shape": "sources/silhouette-voilee.svg",
   "mark": "sources/awrabaya-wordmark.svg",
   "palette": [
-    "#e8dcc8",
-    "#c8ab8a",
-    "#a08a7a",
-    "#d6c2a8",
-    "#7a5f50"
+    "#f6f0e6",
+    "#efe5d6",
+    "#e3d4c0",
+    "#d6c3ac",
+    "#cdb9a3"
   ],
   "nav": [
     "Accueil",
