@@ -1,7 +1,7 @@
 # Awrabaya — site vitrine
 
-*Ma pudeur, mon trésor.* Site d'une seule page, piloté au scroll : une silhouette de
-femme voilée, en verre 3D teinté champagne, s'éclate en quatre fragments puis se recompose, sur cinq
+*Ma pudeur, mon trésor.* Site d'une seule page, piloté au scroll : une arche orientale
+(fenêtre de riad) en verre 3D teinté champagne s'éclate en quatre fragments puis se recompose, sur cinq
 chapitres (Accueil, À propos, Collection, Clientes, Contact), sur un fond qui
 passe de l'ivoire au taupe. Tout est rendu en temps
 réel avec Three.js, sans image ni vidéo.
@@ -23,7 +23,7 @@ s'ouvre directement par double-clic.
 | Textes, menu | `index.html` |
 | Adresse e-mail | `index.html` : lien `mailto:` (ligne 123) et attribut `data-email` du formulaire (ligne 125) |
 | Les trois chiffres du chapitre « Clientes » | `index.html`, lignes 109 à 111 : `data-count` **et** le nombre affiché |
-| Objet en verre (la silhouette voilée) | `assets/shapes/shape.svg` (dessinée par `sources/silhouette-voilee.py`) |
+| Objet en verre (l'arche orientale) | `assets/shapes/shape.svg` (dessinée par `sources/arche-orientale.py`) |
 | Logo de l'en-tête | `assets/brand/mark.svg` |
 | Couleurs du fond (ivoire → taupe) | `SITE.palette` en tête de `js/app.js` |
 | Mise en page, couleurs du texte | `css/styles.css` |
@@ -49,7 +49,7 @@ python3 tools/build_site.py site.json --out ../awrabaya-build
 index.html                 Structure et contenu
 css/                       Mise en page et police
 js/app.js                  Scène 3D, verre, découpage, scroll, formulaire
-assets/shapes/shape.svg    La silhouette voilée en verre
+assets/shapes/shape.svg    L'arche orientale en verre
 assets/brand/mark.svg      Le logo AWRABAYA de l'en-tête
 sources/                   Logo d'origine et ses versions vectorisées
 vendor/                    Three.js r160
