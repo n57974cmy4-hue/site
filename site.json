@@ -1,0 +1,105 @@
+{
+  "brand": "Awrabaya",
+  "title": "Awrabaya — Mode pudique à petits prix",
+  "meta_description": "Awrabaya habille les femmes de vêtements mastour élégants et confortables, à petits prix.",
+  "email": "contact.awrabaya@gmail.com",
+  "lang": "fr",
+  "shape": "sources/awrabaya-a.svg",
+  "mark": "sources/awrabaya-wordmark.svg",
+  "palette": [
+    "#e8dcc8",
+    "#c8ab8a",
+    "#a08a7a",
+    "#d6c2a8",
+    "#7a5f50"
+  ],
+  "nav": [
+    "Accueil",
+    "À propos",
+    "Collection",
+    "Clientes",
+    "Contact"
+  ],
+  "hero": {
+    "title": [
+      "La mode pudique",
+      "à petits prix"
+    ],
+    "lead": "Awrabaya habille les femmes de vêtements mastour : abayas, robes longues, tuniques et ensembles couvrants. Des pièces élégantes et confortables, à des prix accessibles à toutes."
+  },
+  "about": {
+    "title": [
+      "Ma pudeur,",
+      "mon trésor"
+    ],
+    "text": "Awrabaya est née d'une idée simple : se couvrir avec élégance ne devrait pas coûter cher. Nous choisissons des coupes amples, des tissus agréables et des couleurs douces, pensées pour le quotidien comme pour les grandes occasions. Chaque pièce allie pudeur, confort et style."
+  },
+  "benefits": {
+    "title": [
+      "Ce que vous",
+      "trouverez ici"
+    ],
+    "items": [
+      {
+        "icon": "euro",
+        "text": "Des prix doux toute l'année, pour s'habiller sans se ruiner."
+      },
+      {
+        "icon": "star",
+        "text": "Des coupes amples et élégantes, du quotidien aux grandes occasions."
+      },
+      {
+        "icon": "check",
+        "text": "Des tissus agréables à porter, choisis pour leur tenue et leur confort."
+      },
+      {
+        "icon": "people",
+        "text": "Des conseils personnalisés pour trouver la taille et le modèle qui vous vont."
+      }
+    ]
+  },
+  "results": {
+    "title": [
+      "Elles nous font",
+      "confiance"
+    ],
+    "lead": "Quelques repères sur Awrabaya et les femmes qui portent nos pièces."
+  },
+  "figures": [
+    {
+      "value": 1200,
+      "suffix": "+",
+      "label": "clientes<br>habillées"
+    },
+    {
+      "value": 4.8,
+      "decimals": 1,
+      "suffix": " / 5",
+      "label": "de satisfaction<br>moyenne"
+    },
+    {
+      "value": 150,
+      "suffix": "+",
+      "label": "modèles<br>proposés"
+    }
+  ],
+  "contact": {
+    "title": [
+      "Une question,",
+      "une commande ?"
+    ],
+    "lead": "Un modèle, une taille, une disponibilité ?<br>Écrivez-nous, nous vous répondons vite."
+  },
+  "form": {
+    "company": "Téléphone",
+    "name_placeholder": "Nom et prénom",
+    "email_placeholder": "vous@exemple.com",
+    "company_placeholder": "06 00 00 00 00",
+    "project": "Votre message",
+    "project_placeholder": "Un modèle, une taille, une couleur…",
+    "button": "Préparer mon e-mail"
+  },
+  "footer": {
+    "spec": "Ma pudeur, mon trésor"
+  }
+}
