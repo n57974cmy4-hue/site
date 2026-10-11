@@ -367,3 +367,45 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 @media (prefers-reduced-motion: reduce) {
     .intro *, .dressing * { transition-duration: 0.01s !important; animation: none !important; }
 }
+
+/* =============================================================== classic page
+   Used only when the 3D stage cannot start on a device (see js/fallback.js): the
+   chapters become ordinary sections that scroll, and the arch is drawn flat. */
+html.static-site { scroll-behavior: smooth; }
+html.static-site:not(.intro-open):not(.dressing-open), html.static-site:not(.intro-open):not(.dressing-open) body { overflow: auto; }
+html.static-site * { cursor: auto !important; }
+html.static-site a, html.static-site button { cursor: pointer !important; }
+html.static-site #webgl, html.static-site .scroll-stage, html.static-site .story-progress,
+html.static-site .header-progress, html.static-site .grid-horizontal-line,
+html.static-site .cursor-inner, html.static-site .cursor-outer, html.static-site .cursor-label,
+html.static-site .header-counter { display: none !important; }
+html.static-site .cinematic-container {
+    position: relative; height: auto; display: block; padding: 0; pointer-events: auto; z-index: 2;
+}
+html.static-site .main-header {
+    position: sticky; top: 0; padding: 0 60px; z-index: 50;
+    background: rgba(244, 237, 226, 0.88); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(46, 35, 29, 0.08);
+}
+html.static-site .slide {
+    position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: auto !important; max-width: 1180px !important; margin: 0 auto; padding: 12vh 60px; pointer-events: auto;
+    scroll-margin-top: 70px;
+}
+html.static-site .slide + .slide { border-top: 1px solid rgba(46, 35, 29, 0.08); }
+html.static-site #slide-1 { min-height: calc(100vh - 70px); display: flex; flex-direction: column; justify-content: center; padding-right: 46%; }
+html.static-site #slide-1 .slide-title, html.static-site #slide-1 .col-1, html.static-site #slide-1 .slide-cta { margin-left: 0; }
+html.static-site #slide-1 .col-1 { width: auto; max-width: 36em; }
+html.static-site #slide-2 .slide-desc, html.static-site #slide-4 .slide-desc { max-width: 46em; }
+html.static-site .static-arch {
+    position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+    width: min(34vw, 430px); filter: drop-shadow(0 30px 40px rgba(110, 82, 58, 0.22));
+}
+html.static-site .static-arch svg { display: block; width: 100%; height: auto; }
+html.static-site .contact { min-height: auto; }
+@media (max-width: 900px), (max-aspect-ratio: 4/5) {
+    html.static-site .main-header { padding: 0 20px; }
+    html.static-site .slide { padding: 9vh 22px; }
+    html.static-site #slide-1 { min-height: auto; padding-right: 22px; }
+    html.static-site .static-arch { position: relative; right: auto; top: auto; transform: none; width: min(62vw, 300px); margin: 36px auto 0; }
+}

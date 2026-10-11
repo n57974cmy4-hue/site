@@ -18,6 +18,8 @@ const SITE = {
 const SINGLE_SHAPE = SITE.shapes.length === 1;
 
 const shapeSources = await Promise.all(SITE.shapes.map(async (path) => {
+    const inline = document.querySelector(`script[data-shape="${path}"]`);
+    if (inline) return inline.textContent.trim();
     const response = await fetch(new URL(path, document.baseURI));
     if (!response.ok) throw new Error(`Unable to load ${path}`);
     return response.text();

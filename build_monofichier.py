@@ -35,7 +35,7 @@ def build() -> pathlib.Path:
     extra_css = (ROOT / 'css/awrabaya.css').read_text(encoding='utf-8')
     html = re.sub(r'<link rel="stylesheet" href="\./css/awrabaya\.css[^"]*">',
                   lambda m: '<style>\n' + extra_css + '\n</style>', html)
-    for name in ('garments', 'intro', 'catalogue', 'dressing'):
+    for name in ('fallback', 'garments', 'intro', 'catalogue', 'dressing'):
         code = (ROOT / f'js/{name}.js').read_text(encoding='utf-8')
         if '</script' in code:
             raise SystemExit(f'js/{name}.js contains a closing script tag')
