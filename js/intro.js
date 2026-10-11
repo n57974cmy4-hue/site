@@ -82,25 +82,6 @@
         '<path d="M28.5 46V150" stroke="#fff4d2" stroke-opacity=".7" stroke-width="1.2"/></symbol>' +
         '</defs></svg>';
 
-    // Inside the riad: warm light and a rail of pieces waiting on their hangers.
-    function interior() {
-        var pieces = [['abaya', '#2a211b', -3], ['kimono', '#a88a6a', 2], ['robe', '#8f9581', -1.5],
-                      ['papillon', '#c9ab9b', 2.5], ['kaftan', '#3e4a43', -2]];
-        var out = '<svg class="intro-inside" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">' +
-            '<g clip-path="url(#awrDoorClip)"><rect width="400" height="600" fill="url(#awrLight)"/>' +
-            '<path d="M120 0 60 600H340L280 0Z" fill="#fff" opacity=".35"/>' +
-            '<rect y="520" width="400" height="80" fill="#e4d2b9"/>' +
-            '<ellipse cx="200" cy="540" rx="170" ry="16" fill="#b89c7e" opacity=".35"/>' +
-            '<path d="M36 186H364" stroke="url(#awrBrass)" stroke-width="5" stroke-linecap="round"/>';
-        pieces.forEach(function (p, i) {
-            var x = 30 + i * 68, w = 80, h = 172;
-            var g = G.svg(p[0], p[1], { decorative: true })
-                .replace('<svg class="garment"', '<svg x="' + x + '" y="176" width="' + w + '" height="' + h * 2 + '"');
-            out += '<g transform="rotate(' + p[2] + ' ' + (x + w / 2) + ' 186)">' + g + '</g>';
-        });
-        return out + '</g></svg>';
-    }
-
     function frame() {
         var outer = archPath(-46, 446, 250, -54, 640);
         return '<svg class="intro-frame" viewBox="-60 -60 520 700" aria-hidden="true">' +
@@ -116,13 +97,11 @@
     var brandMark = document.querySelector('.brand-mark svg');
     root.innerHTML = defs +
         '<div class="intro-wall" aria-hidden="true"></div>' +
-        '<div class="intro-glow" aria-hidden="true"></div>' +
         '<header class="intro-head">' +
         '<span class="intro-brand" aria-hidden="true">' + (brandMark ? brandMark.outerHTML : 'AWRABAYA') + '</span>' +
         '<span class="intro-tagline">Ma pudeur, mon trésor</span></header>' +
         '<div class="intro-stage">' +
         '<div class="intro-door">' +
-        interior() +
         '<div class="intro-leaves">' +
         '<div class="intro-leaf intro-leaf-left"><svg viewBox="0 0 200 600" preserveAspectRatio="none" aria-hidden="true"><use href="#awrDoorFace" width="400" height="600"/></svg></div>' +
         '<div class="intro-leaf intro-leaf-right"><svg viewBox="200 0 200 600" preserveAspectRatio="none" aria-hidden="true"><use href="#awrDoorFace" width="400" height="600"/></svg></div>' +
@@ -137,7 +116,6 @@
         '<p class="intro-wait" aria-live="polite"></p>';
 
     document.documentElement.classList.add('intro-open');
-    document.body.classList.add('stage-paused');
 
     // Keep the opened leaves inside the doorway: clip their container to the arch.
     (function clipLeaves() {
@@ -157,6 +135,22 @@
         root.querySelector('.intro-leaves').style.clipPath = 'polygon(' + pts.join(',') + ')';
     })();
 
+    // The wall is cut out at the doorway, so the open door shows the real page behind it.
+    function cutDoorway() {
+        var wall = root.querySelector('.intro-wall');
+        var r = root.querySelector('.intro-leaves').getBoundingClientRect();
+        var W = window.innerWidth, H = window.innerHeight, k = r.width / 400;
+        var x0 = r.left, x1 = r.right, spring = r.top + 260 * k, apex = r.top, bottom = r.bottom;
+        var half = (x1 - x0) / 2, h = spring - apex, d = (h * h - half * half) / (2 * half), rad = half + d;
+        var hole = 'M' + x0 + ' ' + bottom + 'V' + spring + 'A' + rad + ' ' + rad + ' 0 0 1 ' + (x0 + half) + ' ' + apex +
+            'A' + rad + ' ' + rad + ' 0 0 1 ' + x1 + ' ' + spring + 'V' + bottom + 'Z';
+        var d2 = 'M0 0H' + W + 'V' + H + 'H0Z ' + hole;
+        wall.style.clipPath = 'path(evenodd, "' + d2 + '")';
+        wall.style.webkitClipPath = 'path(evenodd, "' + d2 + '")';
+    }
+    cutDoorway();
+    window.addEventListener('resize', function () { if (!finished) cutDoorway(); });
+
     var key = root.querySelector('.intro-key');
     var stage = root.querySelector('.intro-stage');
     var started = false, finished = false;
@@ -175,14 +169,13 @@
     function finish() {
         if (finished) return;
         finished = true;
-        document.body.classList.remove('stage-paused');
         whenReady(function () {
             root.classList.add('is-leaving');
             document.documentElement.classList.remove('intro-open');
             setTimeout(function () {
                 root.remove();
                 window.dispatchEvent(new CustomEvent('awrabaya:entered'));
-            }, reduce ? 400 : 1100);
+            }, reduce ? 400 : 1000);
         });
     }
     function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -221,13 +214,8 @@
                 return wait(260);
             })
             .then(function () {
-                root.classList.add('is-open');               // leaves swing in, light spills out
-                document.body.classList.remove('stage-paused');
-                return wait(1250);
-            })
-            .then(function () {
-                root.classList.add('is-entering');           // walk through the doorway
-                return wait(1000);
+                root.classList.add('is-open');               // the leaves swing in onto the shop
+                return wait(1500);
             })
             .then(finish);
     }
@@ -238,7 +226,7 @@
     });
     root.querySelector('.intro-skip').addEventListener('click', function () {
         started = true;
-        root.classList.add('is-open', 'is-entering');
+        root.classList.add('is-open');
         finish();
     });
     document.addEventListener('keydown', function (e) {

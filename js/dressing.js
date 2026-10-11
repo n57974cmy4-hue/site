@@ -387,5 +387,25 @@
         e.preventDefault();
         open();
     });
-    window.AwrabayaDressing = { open: open, close: close, turnTo: turnTo, openPanel: openPanel };
+    // Open the dressing straight on one piece: the rack turns to it, then its sheet opens.
+    function openProduct(id) {
+        var wasOpen = isOpen;
+        if (!wasOpen) open();
+        setTimeout(function () {
+            var find = function () { for (var i = 0; i < items.length; i++) if (items[i].id === id) return i; return -1; };
+            var i = find();
+            if (i < 0) {
+                build('all');
+                root.querySelectorAll('.dr-chip').forEach(function (c) {
+                    var on = c.dataset.cat === 'all';
+                    c.classList.toggle('is-active', on); c.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                i = find();
+            }
+            if (i < 0) return;
+            turnTo(i);
+            setTimeout(function () { openPanel(i); }, reduce ? 0 : 750);
+        }, wasOpen || reduce ? 0 : 1000);
+    }
+    window.AwrabayaDressing = { open: open, close: close, turnTo: turnTo, openPanel: openPanel, openProduct: openProduct };
 })();

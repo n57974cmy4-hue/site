@@ -5,8 +5,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 
 /* =============================================================== door intro */
 .intro {
-    position: fixed; inset: 0; z-index: 9994;
-    background: radial-gradient(120% 90% at 50% 38%, #f8f2e8 0%, #efe4d4 55%, #e2d1bb 100%);
+    position: fixed; inset: 0; z-index: 9994; background: transparent;
     color: #2e231d; overflow: hidden;
     transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.9s;
 }
@@ -17,12 +16,6 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
         radial-gradient(circle at 50% 50%, rgba(160, 128, 96, 0.16) 0 2px, transparent 2.5px) 0 0 / 34px 34px,
         linear-gradient(180deg, transparent 0 78%, rgba(120, 92, 70, 0.10) 100%);
 }
-.intro-glow {
-    position: absolute; inset: -20%; pointer-events: none; opacity: 0;
-    background: radial-gradient(40% 45% at 50% 52%, rgba(255, 252, 244, 0.95), rgba(255, 246, 228, 0.55) 45%, rgba(255, 246, 228, 0) 75%);
-    transition: opacity 1.4s ease 0.25s;
-}
-.intro.is-open .intro-glow { opacity: 1; }
 
 .intro-head {
     position: absolute; top: clamp(18px, 4.5vh, 44px); left: 0; right: 0;
@@ -31,7 +24,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 }
 .intro-brand { display: block; width: clamp(150px, 22vw, 230px); color: #2e231d; }
 .intro-brand svg { display: block; width: 100%; height: auto; }
-.intro-tagline { font: 500 10.5px/1 'Jost', sans-serif; letter-spacing: 0.32em; text-transform: uppercase; color: #8a7060; }
+.intro-tagline { font: 500 10.5px/1 var(--sans); letter-spacing: 0.32em; text-transform: uppercase; color: #8a7060; }
 .intro.is-open .intro-head { opacity: 0; transform: translateY(-12px); }
 
 .intro-stage {
@@ -40,7 +33,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
     transform-origin: 50% 54%;
     transition: transform 1.15s cubic-bezier(0.7, 0, 0.25, 1), opacity 1.1s ease;
 }
-.intro.is-entering .intro-stage { transform: scale(6.5); }
+.intro.is-leaving .intro-stage { transform: scale(1.05); }
 .intro-door {
     position: relative;
     width: min(78vw, calc((100vh - 190px) * 0.742857), 460px);
@@ -48,10 +41,9 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
     perspective: 720px;
     filter: drop-shadow(0 30px 40px rgba(90, 64, 44, 0.22));
 }
-.intro-inside, .intro-leaves {
+.intro-leaves {
     position: absolute; left: 11.538%; top: 8.571%; width: 76.923%; height: 85.714%;
 }
-.intro-inside { display: block; }
 .intro-leaves { perspective: 1300px; pointer-events: none; }
 .intro-leaf {
     position: absolute; top: 0; width: 50%; height: 100%;
@@ -103,7 +95,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .intro-hint {
     position: absolute; left: 0; right: 0; bottom: clamp(22px, 5vh, 46px);
     display: flex; justify-content: center; align-items: center; gap: 12px;
-    font: 500 11px/1 'Jost', sans-serif; letter-spacing: 0.26em; text-transform: uppercase; color: #5a4a40;
+    font: 500 11px/1 var(--sans); letter-spacing: 0.26em; text-transform: uppercase; color: #5a4a40;
     pointer-events: none; transition: opacity 0.4s;
 }
 .intro-hint-dot { width: 7px; height: 7px; border-radius: 50%; background: #b48a4e; box-shadow: 0 0 0 0 rgba(180, 138, 78, 0.6); animation: intro-dot 1.8s infinite; }
@@ -112,58 +104,35 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .intro-skip {
     position: absolute; right: clamp(16px, 3vw, 40px); bottom: clamp(16px, 4vh, 36px);
     padding: 9px 14px; border-radius: 999px; border: 1px solid rgba(46, 35, 29, 0.2); background: rgba(255, 252, 246, 0.5);
-    font: 500 11px/1 'Jost', sans-serif; letter-spacing: 0.06em; color: #5a4a40;
+    font: 500 11px/1 var(--sans); letter-spacing: 0.06em; color: #5a4a40;
     transition: opacity 0.4s, background 0.3s;
 }
 .intro-skip:hover { background: rgba(255, 252, 246, 0.95); }
 .intro.is-open .intro-skip { opacity: 0; pointer-events: none; }
 .intro-wait {
     position: absolute; left: 0; right: 0; bottom: 18%; text-align: center; z-index: 2;
-    font: 500 11px/1 'Jost', sans-serif; letter-spacing: 0.2em; text-transform: uppercase; color: #6b5a4e;
+    font: 500 11px/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #6b5a4e;
 }
 @media (max-width: 600px) {
     .intro-hint { bottom: 64px; letter-spacing: 0.2em; }
     .intro-skip { left: 50%; right: auto; transform: translateX(-50%); bottom: 18px; }
 }
 
-/* =============================================================== entry points */
+/* =============================================================== header button */
 .dressing-btn {
-    display: inline-flex; align-items: center; gap: 9px;
-    padding: 9px 16px 9px 13px; border-radius: 999px; border: 1px solid #2e231d;
-    background: #2e231d; color: #f7f1e8; text-decoration: none;
-    font: 500 12px/1 'Jost', sans-serif; letter-spacing: 0.04em;
-    transition: background 0.3s, transform 0.3s;
+    display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px 11px 15px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--ivory); text-decoration: none;
+    font: 500 10.5px/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; transition: background 0.3s;
 }
-.dressing-btn:hover { background: #4a382d; transform: translateY(-1px); }
-.dressing-btn svg, .slide-cta svg { width: 17px; height: 17px; flex: 0 0 17px; }
-.slide-cta { margin-top: 26px; }
-#slide-1 .slide-cta { margin-left: 60px; }
-.slide-cta a {
-    display: inline-flex; align-items: center; gap: 12px;
-    padding: 15px 22px 15px 18px; border-radius: 999px;
-    background: #2e231d; color: #f7f1e8; text-decoration: none;
-    font: 500 14px/1 'Jost', sans-serif; letter-spacing: 0.02em;
-    box-shadow: 0 14px 30px rgba(70, 48, 32, 0.22);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
-}
-.slide-cta a:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(70, 48, 32, 0.28); }
-.slide-cta .arrow { font-size: 15px; }
-@media (max-width: 900px), (max-aspect-ratio: 4/5) {
-    #slide-1 .slide-cta { margin-left: 0; }
-    .slide-cta { margin-top: 18px; }
-    .slide-cta a { padding: 13px 18px 13px 15px; font-size: 13px; }
-}
-@media (max-width: 560px) {
-    .dressing-btn { padding: 8px 11px; }
-    .dressing-btn .lbl { display: none; }
-    .header-actions { gap: 10px; }
-}
+.dressing-btn:hover { background: #3d3028; }
+.dressing-btn svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--gold-light); }
+@media (max-width: 560px) { .dressing-btn { padding: 9px 11px; } .dressing-btn .lbl { display: none; } }
 
 /* =============================================================== dressing */
 .dressing {
     position: fixed; inset: 0; z-index: 9992; color: #2e231d;
     opacity: 0; transition: opacity 0.45s ease;
-    font-family: 'Jost', sans-serif;
+    font-family: var(--sans);
 }
 .dressing[hidden] { display: none; }
 .dressing.is-visible { opacity: 1; }
@@ -189,14 +158,14 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .dr-filters { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: rgba(255, 251, 244, 0.7); border: 1px solid rgba(46, 35, 29, 0.1); }
 .dr-chip {
     padding: 9px 14px; border: 0; border-radius: 999px; background: transparent;
-    font: 500 12px/1 'Jost', sans-serif; color: #5a4a40; white-space: nowrap;
+    font: 500 12px/1 var(--sans); color: #5a4a40; white-space: nowrap;
     transition: background 0.3s, color 0.3s;
 }
 .dr-chip.is-active { background: #2e231d; color: #f7f1e8; }
 .dr-close {
     justify-self: end; width: 46px; height: 46px; border-radius: 50%;
     border: 1px solid rgba(46, 35, 29, 0.2); background: rgba(255, 251, 244, 0.8);
-    font: 300 26px/1 'Jost', sans-serif; color: #2e231d;
+    font: 300 26px/1 var(--sans); color: #2e231d;
     transition: transform 0.3s, background 0.3s;
 }
 .dr-close:hover { transform: rotate(90deg); background: #fff; }
@@ -225,7 +194,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
     position: absolute; right: 2%; top: 21%;
     padding: 5px 9px 5px 14px; border-radius: 3px 6px 6px 3px;
     background: #ecdfc8; color: #3e3027; box-shadow: 0 3px 8px rgba(70, 48, 32, 0.18);
-    font: 600 calc(var(--item-w) * 0.068)/1 'Jost', sans-serif; letter-spacing: 0.01em; white-space: nowrap;
+    font: 600 calc(var(--item-w) * 0.068)/1 var(--sans); letter-spacing: 0.01em; white-space: nowrap;
     transform: rotate(7deg); backface-visibility: hidden;
 }
 .dr-tag::before { content: ''; position: absolute; left: 5px; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: #bfa889; }
@@ -246,7 +215,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 }
 .dr-arrow {
     width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(46, 35, 29, 0.18); background: #fffaf2;
-    font: 400 18px/1 'Jost', sans-serif; color: #2e231d; transition: background 0.3s;
+    font: 400 18px/1 var(--sans); color: #2e231d; transition: background 0.3s;
 }
 .dr-arrow:hover { background: #fff; }
 .dr-focus-text { min-width: 180px; text-align: center; }
@@ -256,7 +225,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .dr-dots i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid rgba(46, 35, 29, 0.25); }
 .dr-see {
     padding: 13px 18px; border-radius: 999px; border: 0; background: #2e231d; color: #f7f1e8;
-    font: 500 13px/1 'Jost', sans-serif; white-space: nowrap;
+    font: 500 13px/1 var(--sans); white-space: nowrap;
 }
 .dr-hint {
     position: absolute; left: 0; right: 0; bottom: 12px; z-index: 3; text-align: center;
@@ -300,7 +269,7 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .dr-panel-close {
     position: absolute; top: 18px; left: 18px; z-index: 2;
     padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(46, 35, 29, 0.15); background: rgba(255, 251, 244, 0.85);
-    font: 500 12px/1 'Jost', sans-serif; color: #2e231d;
+    font: 500 12px/1 var(--sans); color: #2e231d;
 }
 .dr-panel-art {
     height: min(46vh, 430px); padding: 64px 0 10px; display: grid; place-items: center;
@@ -324,14 +293,14 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 .dr-swatch:hover { transform: scale(1.08); }
 .dr-size {
     min-width: 48px; padding: 11px 14px; border-radius: 10px; border: 1px solid rgba(46, 35, 29, 0.2); background: #fff;
-    font: 500 13px/1 'Jost', sans-serif; color: #2e231d; transition: background 0.25s, color 0.25s, border-color 0.25s;
+    font: 500 13px/1 var(--sans); color: #2e231d; transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
 .dr-size.is-active { background: #2e231d; border-color: #2e231d; color: #f7f1e8; }
 .dr-sizes.is-shaking { animation: dr-shake 0.4s; }
 @keyframes dr-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
 .dr-order {
     width: 100%; margin-top: 30px; padding: 18px 22px; border-radius: 999px; border: 0;
-    background: #2e231d; color: #f7f1e8; font: 500 15px/1 'Jost', sans-serif;
+    background: #2e231d; color: #f7f1e8; font: 500 15px/1 var(--sans);
     display: flex; justify-content: center; gap: 12px; transition: background 0.3s, transform 0.3s;
 }
 .dr-order:hover { background: #4a382d; transform: translateY(-1px); }
@@ -368,121 +337,14 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
     .intro *, .dressing * { transition-duration: 0.01s !important; animation: none !important; }
 }
 
-/* =============================================================== classic page
-   Used only when the 3D stage cannot start on a device (see js/fallback.js): the
-   chapters become ordinary sections that scroll, and the arch is drawn flat. */
-html.static-site { scroll-behavior: smooth; }
-html.static-site:not(.intro-open):not(.dressing-open), html.static-site:not(.intro-open):not(.dressing-open) body { overflow: auto; }
-html.static-site * { cursor: auto !important; }
-html.static-site a, html.static-site button { cursor: pointer !important; }
-html.static-site #webgl, html.static-site .scroll-stage, html.static-site .story-progress,
-html.static-site .header-progress, html.static-site .grid-horizontal-line,
-html.static-site .cursor-inner, html.static-site .cursor-outer, html.static-site .cursor-label,
-html.static-site .header-counter { display: none !important; }
-html.static-site .cinematic-container {
-    position: relative; height: auto; display: block; padding: 0; pointer-events: auto; z-index: 2;
-}
-html.static-site .main-header {
-    position: sticky; top: 0; padding: 0 60px; z-index: 50;
-    background: rgba(244, 237, 226, 0.88); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(46, 35, 29, 0.08);
-}
-html.static-site .slide {
-    position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
-    width: auto !important; max-width: 1180px !important; margin: 0 auto; padding: 12vh 60px; pointer-events: auto;
-    scroll-margin-top: 70px;
-}
-html.static-site .slide + .slide { border-top: 1px solid rgba(46, 35, 29, 0.08); }
-html.static-site #slide-1 { min-height: calc(100vh - 70px); display: flex; flex-direction: column; justify-content: center; padding-right: 46%; }
-html.static-site #slide-1 .slide-title, html.static-site #slide-1 .col-1, html.static-site #slide-1 .slide-cta { margin-left: 0; }
-html.static-site #slide-1 .col-1 { width: auto; max-width: 36em; }
-html.static-site #slide-2 .slide-desc, html.static-site #slide-4 .slide-desc { max-width: 46em; }
-html.static-site .static-arch {
-    position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
-    width: min(34vw, 430px); filter: drop-shadow(0 30px 40px rgba(110, 82, 58, 0.22));
-}
-html.static-site .static-arch svg { display: block; width: 100%; height: auto; }
-html.static-site .contact { min-height: auto; }
-@media (max-width: 900px), (max-aspect-ratio: 4/5) {
-    html.static-site .main-header { padding: 0 20px; }
-    html.static-site .slide { padding: 9vh 22px; }
-    html.static-site #slide-1 { min-height: auto; padding-right: 22px; }
-    html.static-site .static-arch { position: relative; right: auto; top: auto; transform: none; width: min(62vw, 300px); margin: 36px auto 0; }
-}
-
-/* =============================================================== maison theme
-   Couture typography and a tight palette: ivory, sand, taupe, espresso, antique gold.
-   Serif display for titles (close to the logo's Didone), a fine geometric sans for
-   text, square-cut buttons, hairlines instead of fills. */
-:root {
-    --ink: #2a211b; --ink-soft: #574940; --taupe: #8c7766; --sand: #e9dfd1;
-    --ivory: #f6f1ea; --gold: #a8875a; --gold-light: #d2bc94;
-    --serif: 'Playfair Display', 'Times New Roman', serif;
-    --sans: 'Jost', 'Helvetica Neue', sans-serif;
-}
-html, body { background-color: var(--ivory); }
-body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
-
-/* titles */
-.slide-title, .contact-title {
-    font-family: var(--serif); font-weight: 400; letter-spacing: -0.012em; line-height: 1.04; color: var(--ink);
-}
-.slide-title .line.muted, .contact-title .line.muted { color: var(--taupe); font-style: italic; }
-.slide-desc { font-weight: 300; color: var(--ink-soft); letter-spacing: 0.01em; line-height: 1.85; }
-.figure dt { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; color: var(--ink); }
-.figure dd { color: var(--taupe); letter-spacing: 0.04em; }
-.benefit p { color: var(--ink-soft); font-weight: 300; }
-.benefit-icon { border-color: rgba(168, 135, 90, 0.55); color: var(--gold); border-radius: 50%; }
-
-/* header: small caps, hairlines, no technical counter */
-.nav-link { font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(42, 33, 27, 0.55); }
-.nav-link:hover, .nav-link.is-active { color: var(--ink); }
-.nav-link::after { background: var(--gold); }
-.header-counter { display: none !important; }
-.brand { color: var(--ink); }
-.contact-btn, .dressing-btn {
-    border-radius: 0; padding: 11px 18px; font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-}
-.contact-btn { border-color: rgba(42, 33, 27, 0.28); color: var(--ink); }
-.contact-btn:hover { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
-.dressing-btn { background: var(--ink); border-color: var(--ink); color: var(--ivory); padding-left: 15px; }
-.dressing-btn:hover { background: #3d3028; transform: none; }
-.btn-arrow { display: none; }
-
-/* calls to action */
-.slide-cta a {
-    border-radius: 0; padding: 17px 26px 17px 22px; gap: 14px; background: var(--ink); color: var(--ivory);
-    font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-    box-shadow: none; position: relative;
-}
-.slide-cta a::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(210, 188, 148, 0.4); pointer-events: none; }
-.slide-cta a:hover { transform: none; box-shadow: 0 16px 34px rgba(42, 33, 27, 0.18); }
-.slide-cta svg { color: var(--gold-light); }
-
-/* contact */
-.contact-eyebrow { font-family: var(--sans); color: var(--taupe); letter-spacing: 0.3em; }
-.eyebrow-dot { background: var(--gold); box-shadow: none; }
-.contact-mail { color: var(--ink); border-color: rgba(42, 33, 27, 0.25); font-family: var(--serif); font-style: italic; font-size: 20px; }
-.pill-btn { border-radius: 0; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; border-color: var(--ink); }
-.pill-btn:hover { background: var(--ink); color: var(--ivory); transform: none; }
-.card-head, .field-label { letter-spacing: 0.18em; text-transform: uppercase; font-size: 10.5px; color: var(--ink-soft); }
-.field-label em { color: var(--gold); }
-.contact-footer { letter-spacing: 0.24em; }
-
-/* cursor: a quiet ring, no read-out */
-.cursor-label, .cursor-ticks { display: none !important; }
-.cursor-outer { width: 30px; height: 30px; border-width: 1px; }
-body.cursor-hover .cursor-outer { width: 46px; height: 46px; }
-
-/* loader */
-.loader { background: var(--ivory); }
-.loader-value { font-family: var(--serif); font-weight: 400; color: var(--ink); }
-.loader-bar span { background: var(--gold); }
-.loader-hint { letter-spacing: 0.3em; }
-
+/* =============================================================== maison theme: intro and dressing */
 /* intro */
-.intro { background: radial-gradient(120% 90% at 50% 38%, #faf6f0 0%, #f1e9de 55%, #e5d9c8 100%); }
-.intro-wall { opacity: 0.18; }
+.intro-wall {
+    opacity: 1;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(160, 128, 96, 0.12) 0 1.5px, transparent 2px) 0 0 / 34px 34px,
+        radial-gradient(120% 90% at 50% 38%, #faf6f0 0%, #f1e9de 55%, #e5d9c8 100%);
+}
 .intro-tagline { letter-spacing: 0.4em; color: var(--taupe); }
 .intro-hint { letter-spacing: 0.32em; font-size: 10.5px; color: var(--ink-soft); }
 .intro-hint-dot { background: var(--gold); }
@@ -520,5 +382,3 @@ body.cursor-hover .cursor-outer { width: 46px; height: 46px; }
 .dr-size.is-active { background: var(--ink); border-color: var(--ink); }
 .dr-swatch.is-active { box-shadow: inset 0 0 0 1px rgba(42, 33, 27, 0.2), 0 0 0 3px #faf7f2, 0 0 0 4px var(--gold); }
 
-/* classic page */
-html.static-site .main-header { background: rgba(246, 241, 234, 0.9); }
