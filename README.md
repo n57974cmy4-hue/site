@@ -6,6 +6,18 @@ chapitres (Accueil, À propos, Collection, Clientes, Contact), sur un fond qui
 passe de l'ivoire au taupe. Tout est rendu en temps
 réel avec Three.js, sans image ni vidéo.
 
+## L'expérience
+
+1. **La porte du riad.** À l'arrivée, une porte en bois sculpté attend dans une arche de
+   pierre. La visiteuse prend la clé en laiton : elle vole jusqu'à la serrure, s'enfonce,
+   tourne, et les deux battants s'ouvrent sur une penderie baignée de lumière. On entre.
+   Le bouton « Passer l'intro » et la touche Échap permettent de l'éviter.
+2. **Le site 3D.** L'arche orientale en verre se décompose et se recompose au scroll.
+3. **Le dressing.** Le bouton « Le dressing » (en-tête, accueil, chapitre Collection) ouvre
+   les portes d'une penderie tournante : on la fait tourner du doigt, à la souris, à la
+   molette ou avec les flèches, les cintres se balancent, et chaque pièce s'ouvre sur sa
+   fiche (coloris, taille, commande par e-mail).
+
 ## Voir le site
 
 ```sh
@@ -27,6 +39,10 @@ s'ouvre directement par double-clic.
 | Logo de l'en-tête | `assets/brand/mark.svg` |
 | Couleurs du fond (ivoire → taupe) | `SITE.palette` en tête de `js/app.js` |
 | Mise en page, couleurs du texte | `css/styles.css` |
+| Articles du dressing (nom, prix, coloris, tailles, description) | `js/catalogue.js` |
+| Dessins des vêtements | `js/garments.js` |
+| Porte d'entrée | `js/intro.js` et `css/awrabaya.css` |
+| Dressing tournant, fiche produit, commande | `js/dressing.js` et `css/awrabaya.css` |
 
 Après une modification, régénérez la version monofichier :
 
@@ -34,7 +50,14 @@ Après une modification, régénérez la version monofichier :
 python3 build_monofichier.py
 ```
 
+Les articles de `js/catalogue.js` sont des exemples : remplacez-les par les vôtres.
+Le bouton « Commander » ouvre la messagerie avec la pièce, le coloris et la taille ; il
+sera remplacé par le panier de la boutique WooCommerce.
+
 ## Tout régénérer depuis le brief
+
+Attention : `tools/build_site.py` repart du gabarit d'origine, sans la porte ni le
+dressing. Modifiez plutôt les fichiers directement, puis `python3 build_monofichier.py`.
 
 `site.json` contient tous les textes, la palette et les fichiers du logo
 (`sources/`). Pour reconstruire le site complet dans un autre dossier :

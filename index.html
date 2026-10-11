@@ -6,6 +6,7 @@
 <title>Awrabaya — Mode pudique à petits prix</title>
 <meta name="description" content="Awrabaya habille les femmes de vêtements mastour élégants et confortables, à petits prix.">
 <link rel="stylesheet" href="./css/styles.css?v=20261010">
+<link rel="stylesheet" href="./css/awrabaya.css?v=20261011">
 <script type="importmap">
 {
   "imports": {
@@ -59,6 +60,7 @@
   setTimeout(finish, 17000);
 })();
 </script>
+<div class="intro" id="intro" role="dialog" aria-label="Entrée de la boutique Awrabaya"></div>
 <div class="cursor-inner"></div>
 <div class="cursor-outer"><span class="cursor-ticks"><span></span><span></span><span></span><span></span></span></div>
 <div class="cursor-label" aria-hidden="true">000</div>
@@ -76,6 +78,7 @@
   </nav>
   <div class="header-actions">
     <span class="header-counter" aria-hidden="true"><span id="brand-chapter">01</span><span class="counter-sep"></span>05</span>
+    <a href="#dressing" class="dressing-btn" data-open-dressing><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.6a2 2 0 1 1 2-2"/><path d="M10 6.6v1.1l-7.4 5.5c-.8.6-.4 1.8.6 1.8h13.6c1 0 1.4-1.2.6-1.8L10 7.7"/></svg><span class="lbl">Le dressing</span></a>
     <a href="#contact" class="contact-btn">Contact <span class="btn-arrow">&#8599;</span></a>
   </div>
 </div>
@@ -85,6 +88,7 @@
   <div class="desc-row">
     <p class="slide-desc col-1">Awrabaya habille les femmes de vêtements mastour : abayas, robes longues, tuniques et ensembles couvrants. Des pièces élégantes et confortables, à des prix accessibles à toutes.</p>
   </div>
+  <p class="slide-desc slide-cta"><a href="#dressing" data-open-dressing><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.6a2 2 0 1 1 2-2"/><path d="M10 6.6v1.1l-7.4 5.5c-.8.6-.4 1.8.6 1.8h13.6c1 0 1.4-1.2.6-1.8L10 7.7"/></svg>Entrer dans le dressing <span class="arrow" aria-hidden="true">&#8599;</span></a></p>
 </div>
 
 <div class="slide" id="slide-2">
@@ -100,6 +104,7 @@
     <li class="benefit"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg></span><p>Des tissus agréables à porter, choisis pour leur tenue et leur confort.</p></li>
     <li class="benefit"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><path d="M3.5 16c0-2.5 2-4.2 4.5-4.2s4.5 1.7 4.5 4.2"/><path d="M13.5 6.2a2.4 2.4 0 0 1 0 4.4M14.5 16c0-1.6-.5-2.9-1.4-3.7" opacity=".55"/></svg></span><p>Des conseils personnalisés pour trouver la taille et le modèle qui vous vont.</p></li>
   </ul>
+  <p class="slide-desc slide-cta"><a href="#dressing" data-open-dressing><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.6a2 2 0 1 1 2-2"/><path d="M10 6.6v1.1l-7.4 5.5c-.8.6-.4 1.8.6 1.8h13.6c1 0 1.4-1.2.6-1.8L10 7.7"/></svg>Ouvrir le dressing <span class="arrow" aria-hidden="true">&#8599;</span></a></p>
 </div>
 
 <div class="slide" id="slide-4">
@@ -153,6 +158,11 @@
   </div>
 </div>
 <canvas id="webgl"></canvas>
+<div class="dressing" id="dressing" role="dialog" aria-modal="true" aria-labelledby="dr-title" aria-hidden="true" hidden></div>
+<script src="./js/garments.js?v=20261011"></script>
+<script src="./js/intro.js?v=20261011"></script>
+<script src="./js/catalogue.js?v=20261011"></script>
+<script src="./js/dressing.js?v=20261011"></script>
 <script type="module" src="./js/app.js?v=20261010"></script>
 </body>
 </html>

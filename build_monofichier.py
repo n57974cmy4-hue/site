@@ -31,6 +31,17 @@ def build() -> pathlib.Path:
     html = re.sub(r'<link rel="stylesheet" href="\./css/styles\.css[^"]*">',
                   lambda m: '<style>\n' + fonts_css + '\n' + styles_css + '\n</style>', html)
 
+    # 1b. the door intro and dressing styles, then their scripts, inlined in place
+    extra_css = (ROOT / 'css/awrabaya.css').read_text(encoding='utf-8')
+    html = re.sub(r'<link rel="stylesheet" href="\./css/awrabaya\.css[^"]*">',
+                  lambda m: '<style>\n' + extra_css + '\n</style>', html)
+    for name in ('garments', 'intro', 'catalogue', 'dressing'):
+        code = (ROOT / f'js/{name}.js').read_text(encoding='utf-8')
+        if '</script' in code:
+            raise SystemExit(f'js/{name}.js contains a closing script tag')
+        html = re.sub(r'<script src="\./js/' + name + r'\.js[^"]*"></script>',
+                      lambda m, code=code: '<script>\n' + code + '\n</script>', html)
+
     # 2. import map pointing at embedded modules (the loader still imports "three")
     imports = {
         'three': data_uri(ROOT / 'vendor/three.module.js', 'text/javascript'),

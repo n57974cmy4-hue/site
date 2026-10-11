@@ -962,6 +962,8 @@ document.addEventListener('visibilitychange', () => {
 function animate(now = performance.now()) {
     if (document.hidden) return;
     animationRequest = requestAnimationFrame(animate);
+    // The door intro and the dressing cover the stage: skip the frame, keep the loop alive.
+    if (document.body.classList.contains('stage-paused')) { lastFrameAt = 0; clock.getDelta(); return; }
     const unsettled = Math.abs(THREE.MathUtils.clamp(window.scrollY / stageMaxScroll(), 0, 1) - currentScroll) > 0.0001
         || Math.abs(targetContact - currentContact) > 0.0001;
     const fps = unsettled || now - lastInputAt < 1500 ? 60 : 30;
