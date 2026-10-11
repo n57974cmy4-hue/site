@@ -26,7 +26,7 @@
         return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
     }
     function trimFor(colour) {
-        return luminance(colour) > 0.55 ? shade(colour, -0.28) : '#cdb07c';
+        return luminance(colour) > 0.55 ? shade(colour, -0.24) : '#c2a573';
     }
 
     // Shared gradients, defined once per document and referenced by every drawing.
@@ -135,11 +135,11 @@
         },
         // Kaftan: straight and generous, embroidered front band.
         kaftan: function (c, o) {
-            var gold = o.trim || '#c9a35c';
+            var gold = o.trim || '#b8975f';
             return fabric('M84 44Q100 58 116 44L168 64 182 214Q166 220 150 216L146 130 154 418Q100 426 46 418L54 130 50 216Q34 220 18 214L32 64Z', c) +
                 lines(['M70 140Q66 290 62 416', 'M130 140Q134 290 138 416', 'M40 80Q32 150 30 212', 'M160 80Q168 150 170 212'], FOLD, 1.6, 0.13) +
                 lines(['M100 50V300'], gold, 7) +
-                '<path d="M100 52V298" stroke="#f1dca6" stroke-width="3" stroke-dasharray="2 6" stroke-linecap="round"/>' +
+                '<path d="M100 52V298" stroke="#e8d6ac" stroke-width="3" stroke-dasharray="2 6" stroke-linecap="round"/>' +
                 '<circle cx="100" cy="306" r="5" fill="' + gold + '"/>' +
                 lines(['M84 44Q100 58 116 44', 'M18 214Q34 220 50 216', 'M182 214Q166 220 150 216'], gold, 3.4);
         }

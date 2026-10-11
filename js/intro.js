@@ -33,7 +33,7 @@
         return out;
     }
     function panel(x, y, w, h) {
-        return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="#6f5545"/>' +
+        return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="#4d3a2d"/>' +
             '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="url(#awrStars)"/>' +
             '<rect x="' + (x + 1.5) + '" y="' + (y + 1.5) + '" width="' + (w - 3) + '" height="' + (h - 3) + '" rx="2" fill="none" stroke="#3e2e24" stroke-width="3"/>' +
             '<rect x="' + (x - 2) + '" y="' + (y - 2) + '" width="' + (w + 4) + '" height="' + (h + 4) + '" rx="4" fill="none" stroke="#b79478" stroke-opacity=".55" stroke-width="1.4"/>';
@@ -42,15 +42,15 @@
     var defs =
         '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
         '<linearGradient id="awrWoodDoor" x1="0" y1="0" x2="1" y2="1">' +
-        '<stop offset="0" stop-color="#94755f"/><stop offset=".55" stop-color="#7a5e4c"/><stop offset="1" stop-color="#644b3c"/></linearGradient>' +
+        '<stop offset="0" stop-color="#6f5747"/><stop offset=".55" stop-color="#56412f"/><stop offset="1" stop-color="#433226"/></linearGradient>' +
         '<linearGradient id="awrBrass" x1="0" y1="0" x2="1" y2="1">' +
-        '<stop offset="0" stop-color="#f3dda4"/><stop offset=".45" stop-color="#c9a05a"/><stop offset="1" stop-color="#8d6a33"/></linearGradient>' +
+        '<stop offset="0" stop-color="#eedcb4"/><stop offset=".45" stop-color="#bf9f69"/><stop offset="1" stop-color="#86683e"/></linearGradient>' +
         '<linearGradient id="awrStone" x1="0" y1="0" x2="0" y2="1">' +
         '<stop offset="0" stop-color="#ece1d0"/><stop offset="1" stop-color="#d4c2a8"/></linearGradient>' +
         '<radialGradient id="awrLight" cx=".5" cy=".42" r=".75">' +
         '<stop offset="0" stop-color="#fffdf7"/><stop offset=".55" stop-color="#f7ecdc"/><stop offset="1" stop-color="#e6d3ba"/></radialGradient>' +
         '<pattern id="awrStars" width="34" height="34" patternUnits="userSpaceOnUse">' +
-        '<path d="M9 9H25V25H9ZM17 5.7 28.3 17 17 28.3 5.7 17Z" fill="none" stroke="#c7a689" stroke-opacity=".55" stroke-width="1"/>' +
+        '<path d="M9 9H25V25H9ZM17 5.7 28.3 17 17 28.3 5.7 17Z" fill="none" stroke="#b8996c" stroke-opacity=".42" stroke-width="1"/>' +
         '<circle cx="17" cy="17" r="2.2" fill="#4b382c"/></pattern>' +
         '<pattern id="awrZellige" width="26" height="26" patternUnits="userSpaceOnUse">' +
         '<rect width="26" height="26" fill="#d9c6ab"/><path d="M13 2 24 13 13 24 2 13Z" fill="#c4ab8b"/>' +
@@ -84,8 +84,8 @@
 
     // Inside the riad: warm light and a rail of pieces waiting on their hangers.
     function interior() {
-        var pieces = [['abaya', '#2c2420', -3], ['kimono', '#b08453', 2], ['robe', '#8a8f74', -1.5],
-                      ['papillon', '#d4a5a0', 2.5], ['kaftan', '#2f5b4c', -2]];
+        var pieces = [['abaya', '#2a211b', -3], ['kimono', '#a88a6a', 2], ['robe', '#8f9581', -1.5],
+                      ['papillon', '#c9ab9b', 2.5], ['kaftan', '#3e4a43', -2]];
         var out = '<svg class="intro-inside" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">' +
             '<g clip-path="url(#awrDoorClip)"><rect width="400" height="600" fill="url(#awrLight)"/>' +
             '<path d="M120 0 60 600H340L280 0Z" fill="#fff" opacity=".35"/>' +

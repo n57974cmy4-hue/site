@@ -11,7 +11,7 @@ import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 // to the contact section.
 const SITE = {
     shapes: ['./assets/shapes/shape.svg'],
-    palette: ['#f6f0e6', '#efe5d6', '#e3d4c0', '#d6c3ac', '#cdb9a3'],
+    palette: ['#f7f2eb', '#f0e8dd', '#e8dccd', '#dfd0bd', '#d6c4ad'],
     fragments: 4
 };
 
@@ -34,7 +34,7 @@ const openingSource = shapeSources[0];
 const finalSource = SINGLE_SHAPE ? shapeSources[0] : shapeSources[1];
 
 // ---- Tunables ---------------------------------------------------------------
-const LOGO_HEIGHT = 3.1;                              // opening shape, world units
+const LOGO_HEIGHT = 2.65;                              // opening shape, world units
 const LOGO_DEPTH = 0.44;
 const LOGO_BEVEL = { size: 0.042, thickness: 0.052 };
 // With a single shape the recomposed prism must match the one that broke apart, down to
@@ -121,9 +121,9 @@ function createSparks() {
 
         if (Math.random() < 0.6) {
             // taupe glass dust
-            colors[i * 3] = 0.42 + Math.random() * 0.10;
-            colors[i * 3 + 1] = 0.33 + Math.random() * 0.08;
-            colors[i * 3 + 2] = 0.26 + Math.random() * 0.06;
+            colors[i * 3] = 0.66 + Math.random() * 0.08;
+            colors[i * 3 + 1] = 0.53 + Math.random() * 0.07;
+            colors[i * 3 + 2] = 0.35 + Math.random() * 0.06;
         } else {
             // white glints
             colors[i * 3] = 1.0;
@@ -148,7 +148,7 @@ function createSparks() {
         size: 0.025,
         vertexColors: true,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.32,
         blending: THREE.NormalBlending,
         depthWrite: false,
         map: createSparkTexture()
@@ -205,14 +205,14 @@ function createGlassMaterial() {
         transmission: 1.0,
         thickness: 0.48,
         ior: 1.46,
-        attenuationColor: new THREE.Color('#c9a882'),
-        attenuationDistance: 1.6,
+        attenuationColor: new THREE.Color('#c7a77c'),
+        attenuationDistance: 1.9,
         clearcoat: 0.65,
         clearcoatRoughness: 0.018,
-        iridescence: 0.30,
+        iridescence: 0.14,
         iridescenceIOR: 1.3,
         iridescenceThicknessRange: [100, 420],
-        envMapIntensity: 1.10,
+        envMapIntensity: 1.45,
         side: THREE.DoubleSide
     });
     // r160 has no built-in dispersion parameter. Split only the object's
@@ -841,17 +841,12 @@ function createBackgroundShader() {
                 float shoulder = exp(-pow((d + 0.018) * 13.0, 2.0));
                 color *= 1.0 - (body * 0.07 + shoulder * 0.025) * arc;
                 color += vec3(0.05, 0.045, 0.04) * exp(-pow((d - 0.012) * 30.0, 2.0)) * arc;
-                color = mix(color, ink, fineLine(d, 0.0008) * arc * (0.10 + uVelocity * 0.04));
+                color = mix(color, ink, fineLine(d, 0.0008) * arc * (0.055 + uVelocity * 0.03));
             }
 
-            vec2 gridUv = rotate2d(-0.20 + s * 0.18) * uv + vec2(s * 0.08, s * 0.16);
-            vec2 cell = abs(fract(gridUv * 10.0) - 0.5);
-            float grid = max(fineLine((0.5 - cell.x) / 10.0, 0.0002), fineLine((0.5 - cell.y) / 10.0, 0.0002));
-            float periphery = smoothstep(0.28, 0.80, length(uv));
-            color = mix(color, ink, grid * periphery * 0.035);
 
             float vignette = 1.0 - smoothstep(0.36, 1.20, length(uv * vec2(0.8, 1.0)));
-            color *= mix(0.84, 1.0, vignette);
+            color *= mix(0.88, 1.0, vignette);
             float textShade = (1.0 - smoothstep(-0.5, 0.1, uv.y)) * (1.0 - smoothstep(-0.25, 0.3, uv.x));
             color = mix(color, vec3(0.93, 0.89, 0.83), textShade * 0.18);
             // Palette uniforms are linear: encode to sRGB so the hex colours show as chosen.
@@ -880,7 +875,7 @@ function onWindowResize() {
     camera.aspect = sizes.width / sizes.height;
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth > 1500 ? 1.25 : 1.5));
     if (shaderUniforms) renderer.getDrawingBufferSize(shaderUniforms.uResolution.value);
 }
 
@@ -1243,12 +1238,12 @@ function init() {
         powerPreference: "high-performance"
     });
     renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth > 1500 ? 1.25 : 1.5));
 
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 2.2;
+    renderer.toneMappingExposure = 1.4;
     const ambientLight = new THREE.AmbientLight('#ffffff', 0.1);
     scene.add(ambientLight);
 

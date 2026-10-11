@@ -24,7 +24,8 @@ def build() -> pathlib.Path:
     # 1. styles: fonts.css with embedded faces, then styles.css without its @import
     fonts_css = (ROOT / 'css/fonts.css').read_text(encoding='utf-8')
     fonts_css = re.sub(r'url\(\.\./assets/fonts/([^)]+)\)',
-                       lambda m: 'url(' + data_uri(ROOT / 'assets/fonts' / m.group(1), 'font/ttf') + ')',
+                       lambda m: 'url(' + data_uri(ROOT / 'assets/fonts' / m.group(1),
+                                                   'font/woff2' if m.group(1).endswith('.woff2') else 'font/ttf') + ')',
                        fonts_css)
     styles_css = (ROOT / 'css/styles.css').read_text(encoding='utf-8')
     styles_css = re.sub(r'@import url\("\./fonts\.css[^"]*"\);\s*', '', styles_css)

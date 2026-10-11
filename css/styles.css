@@ -12,7 +12,7 @@ html, body {
 }
 
 body {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Jost', sans-serif;
     color: #2e231d;
     overflow-x: hidden;
     cursor: none;
@@ -56,7 +56,7 @@ body {
 @keyframes cursor-spin { to { transform: rotate(360deg); } }
 .cursor-label {
     position: fixed; top: 0; left: 0; transform: translate(26px, 14px);
-    font: 500 9px/1 'Space Grotesk', sans-serif; letter-spacing: 2px; white-space: nowrap;
+    font: 500 9px/1 'Jost', sans-serif; letter-spacing: 2px; white-space: nowrap;
     color: rgba(255, 255, 255, 0.55);
     pointer-events: none; z-index: 9997; mix-blend-mode: difference; transition: opacity 0.3s;
 }
@@ -184,7 +184,7 @@ body.cursor-hidden .cursor-inner, body.cursor-hidden .cursor-outer, body.cursor-
 #slide-4 .slide-desc { max-width: 44ch; }
 
 .slide-title {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Jost', sans-serif;
     font-size: clamp(44px, 5.4vw, 80px);
     line-height: 1.0;
     font-weight: 400;
@@ -255,7 +255,7 @@ body.contact-open .story-progress, body.contact-open .grid-horizontal-line { opa
 }
 .contact-eyebrow {
     display: flex; align-items: center; gap: 14px; margin-bottom: 48px;
-    font: 500 11px/1 'Space Grotesk', sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #6b5a4e;
+    font: 500 11px/1 'Jost', sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #6b5a4e;
 }
 .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #2e231d; box-shadow: 0 0 10px rgba(46, 35, 29, 0.6); }
 .contact-title {
@@ -311,20 +311,20 @@ body.has-glass-card .contact-card::after {
 .contact-card > * { position: relative; z-index: 1; }
 .card-head {
     display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;
-    font: 500 11px/1 'Space Grotesk', sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #5a4a40;
+    font: 500 11px/1 'Jost', sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #5a4a40;
 }
 .card-head .arrow { font-size: 20px; }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 32px; }
 .field { display: flex; flex-direction: column; gap: 10px; }
 .field-wide { grid-column: 1 / -1; }
-.field-label { font: 500 12px/1 'Space Grotesk', sans-serif; letter-spacing: 0.04em; color: #4a3c33; }
+.field-label { font: 500 12px/1 'Jost', sans-serif; letter-spacing: 0.04em; color: #4a3c33; }
 .field-label em { font-style: normal; color: #a07850; }
 .field-label small { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8f7f71; margin-left: 8px; }
 .field input, .field textarea {
     width: 100%; background: transparent; border: 0; border-radius: 0;
     border-bottom: 1px solid rgba(46, 35, 29, 0.20);
     padding: 6px 0 12px; color: #2e231d; outline: none; -webkit-appearance: none; appearance: none;
-    font: 300 16px/1.4 'Space Grotesk', sans-serif; transition: border-color 0.3s;
+    font: 300 16px/1.4 'Jost', sans-serif; transition: border-color 0.3s;
     user-select: text; -webkit-user-select: text;
 }
 .field textarea { min-height: 104px; resize: vertical; }
@@ -336,7 +336,7 @@ body.has-glass-card .contact-card::after {
 .pill-btn {
     display: inline-flex; align-items: center; gap: 18px; padding: 16px 26px; border-radius: 999px;
     border: 1px solid rgba(46, 35, 29, 0.55); background: rgba(46, 35, 29, 0.04); color: #2e231d;
-    font: 500 13px/1 'Space Grotesk', sans-serif; letter-spacing: 0.2px;
+    font: 500 13px/1 'Jost', sans-serif; letter-spacing: 0.2px;
     transition: background 0.3s, color 0.3s, transform 0.3s, border-color 0.3s;
 }
 .pill-btn .arrow { font-size: 16px; }
@@ -355,7 +355,7 @@ body.has-glass-card .contact-card::after {
     position: absolute; left: 60px; right: 60px; bottom: 0;
     display: flex; justify-content: space-between; align-items: center; gap: 24px;
     padding: 18px 0 20px; border-top: 1px solid rgba(46, 35, 29, 0.06);
-    font: 400 10px/1 'Space Grotesk', sans-serif; letter-spacing: 0.14em; text-transform: uppercase;
+    font: 400 10px/1 'Jost', sans-serif; letter-spacing: 0.14em; text-transform: uppercase;
     color: rgba(46, 35, 29, 0.32);
     opacity: 0; transition: opacity 1s ease 0.6s;
 }

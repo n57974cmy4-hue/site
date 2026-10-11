@@ -1,7 +1,7 @@
 # Awrabaya — site vitrine
 
-*Ma pudeur, mon trésor.* Site d'une seule page, piloté au scroll : une arche orientale
-(fenêtre de riad) en verre 3D teinté champagne s'éclate en quatre fragments puis se recompose, sur cinq
+*Ma pudeur, mon trésor.* Site d'une seule page, piloté au scroll : une étoile à huit
+branches (le khatam du zellige) en cristal champagne s'éclate en quatre fragments puis se recompose, sur cinq
 chapitres (Accueil, À propos, Collection, Clientes, Contact), sur un fond qui
 passe de l'ivoire au taupe. Tout est rendu en temps
 réel avec Three.js, sans image ni vidéo.
@@ -12,7 +12,7 @@ réel avec Three.js, sans image ni vidéo.
    pierre. La visiteuse prend la clé en laiton : elle vole jusqu'à la serrure, s'enfonce,
    tourne, et les deux battants s'ouvrent sur une penderie baignée de lumière. On entre.
    Le bouton « Passer l'intro » et la touche Échap permettent de l'éviter.
-2. **Le site 3D.** L'arche orientale en verre se décompose et se recompose au scroll.
+2. **Le site 3D.** L'étoile de cristal, percée comme une broche, se décompose et se recompose au scroll.
 3. **Le dressing.** Le bouton « Le dressing » (en-tête, accueil, chapitre Collection) ouvre
    les portes d'une penderie tournante : on la fait tourner du doigt, à la souris, à la
    molette ou avec les flèches, les cintres se balancent, et chaque pièce s'ouvre sur sa
@@ -35,10 +35,11 @@ s'ouvre directement par double-clic.
 | Textes, menu | `index.html` |
 | Adresse e-mail | `index.html` : lien `mailto:` (ligne 123) et attribut `data-email` du formulaire (ligne 125) |
 | Les trois chiffres du chapitre « Clientes » | `index.html`, lignes 109 à 111 : `data-count` **et** le nombre affiché |
-| Objet en verre (l'arche orientale) | `assets/shapes/shape.svg` (dessinée par `sources/arche-orientale.py`) |
+| Objet en cristal (l'étoile bijou) | `assets/shapes/shape.svg` (dessinée par `sources/etoile-bijou.py`) et sa copie en ligne dans `index.html` (`<script data-shape>`) |
 | Logo de l'en-tête | `assets/brand/mark.svg` |
 | Couleurs du fond (ivoire → taupe) | `SITE.palette` en tête de `js/app.js` |
-| Mise en page, couleurs du texte | `css/styles.css` |
+| Mise en page | `css/styles.css` |
+| Palette, typographie (Playfair Display, Jost), boutons | bloc « maison theme » à la fin de `css/awrabaya.css` |
 | Articles du dressing (nom, prix, coloris, tailles, description) | `js/catalogue.js` |
 | Dessins des vêtements | `js/garments.js` |
 | Porte d'entrée | `js/intro.js` et `css/awrabaya.css` |
@@ -70,9 +71,9 @@ python3 tools/build_site.py site.json --out ../awrabaya-build
 
 ```text
 index.html                 Structure et contenu
-css/                       Mise en page et police
+css/                       Mise en page, thème et polices
 js/app.js                  Scène 3D, verre, découpage, scroll, formulaire
-assets/shapes/shape.svg    L'arche orientale en verre
+assets/shapes/shape.svg    L'étoile bijou en cristal
 assets/brand/mark.svg      Le logo AWRABAYA de l'en-tête
 sources/                   Logo d'origine et ses versions vectorisées
 vendor/                    Three.js r160
