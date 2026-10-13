@@ -182,25 +182,26 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 }
 .dr-carousel.is-swapping { opacity: 0; }
 .dr-item {
-    position: absolute; left: calc(var(--item-w) / -2); top: calc(var(--item-w) * -0.03);
+    position: absolute; left: calc(var(--item-w) / -2); top: calc(var(--item-h, 300px) * -1);
     width: var(--item-w); transform-style: preserve-3d; outline: none;
 }
-.dr-swing { position: relative; transform-origin: 50% 2%; }
-.dr-garment svg {
-    display: block; width: 100%; height: auto;
-    filter: brightness(var(--dim, 1)) drop-shadow(0 16px 14px rgba(70, 48, 32, 0.16));
+.dr-swing { position: relative; }
+.dr-garment { aspect-ratio: 820 / 1260; }
+.dr-garment .garment {
+    display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%;
+    filter: brightness(var(--dim, 1)) drop-shadow(0 18px 16px rgba(70, 48, 32, 0.16));
+    -webkit-user-drag: none; user-select: none; pointer-events: none;
 }
 .dr-tag {
-    position: absolute; right: 2%; top: 21%;
+    position: absolute; right: 0; top: 14%;
     padding: 5px 9px 5px 14px; border-radius: 3px 6px 6px 3px;
     background: #ecdfc8; color: #3e3027; box-shadow: 0 3px 8px rgba(70, 48, 32, 0.18);
     font: 600 calc(var(--item-w) * 0.068)/1 var(--sans); letter-spacing: 0.01em; white-space: nowrap;
     transform: rotate(7deg); backface-visibility: hidden;
 }
 .dr-tag::before { content: ''; position: absolute; left: 5px; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: #bfa889; }
-.dr-tag::after { content: ''; position: absolute; left: 6px; bottom: 100%; width: 1px; height: calc(var(--item-w) * 0.22); background: #b9a38a; transform-origin: bottom; transform: rotate(-24deg); }
 .dr-name {
-    margin-top: 4px; text-align: center; font-size: 13px; font-weight: 500; color: #3a2d25;
+    display: none; margin-top: 4px; text-align: center; font-size: 13px; font-weight: 500; color: #3a2d25;
     backface-visibility: hidden; opacity: 0; transition: opacity 0.4s;
 }
 .dr-item.is-front .dr-name { opacity: 1; }
@@ -275,7 +276,11 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
     height: min(46vh, 430px); padding: 64px 0 10px; display: grid; place-items: center;
     background: radial-gradient(70% 70% at 50% 40%, #fffdf8, #efe5d6);
 }
-.dr-panel-art svg { height: 100%; width: auto; filter: drop-shadow(0 18px 18px rgba(70, 48, 32, 0.18)); }
+.dr-panel-art { position: relative; overflow: hidden; }
+.dr-panel-art .garment {
+    position: absolute; left: 0; right: 0; top: 64px; bottom: 10px; width: 100%; height: calc(100% - 74px);
+    object-fit: contain; object-position: 50% 100%; filter: drop-shadow(0 18px 18px rgba(70, 48, 32, 0.18));
+}
 .dr-panel-body { padding: 26px 32px 36px; }
 .dr-panel-body h3 { font-size: 28px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; }
 .dr-panel-price { margin-top: 8px; font-size: 20px; font-weight: 500; color: #7a5a3c; }
@@ -325,7 +330,8 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
         top: auto; left: 0; width: 100%; height: 90vh; height: 90dvh; border-radius: 24px 24px 0 0;
         transform: translateY(105%); box-shadow: 0 -20px 50px rgba(70, 48, 32, 0.2);
     }
-    .dr-panel-art { height: 36vh; padding-top: 58px; border-radius: 24px 24px 0 0; }
+    .dr-panel-art { height: 40vh; padding-top: 58px; border-radius: 24px 24px 0 0; }
+    .dr-panel-art .garment { top: 58px; height: calc(100% - 68px); }
     .dr-panel-body { padding: 20px 20px 30px; }
     .dressing.has-panel .dr-focus, .dressing.has-panel .dr-hint { opacity: 0; pointer-events: none; }
 }
@@ -370,7 +376,6 @@ html.intro-open, html.intro-open body, html.dressing-open, html.dressing-open bo
 }
 .dr-hint { letter-spacing: 0.32em; }
 .dr-tag { background: #f7f1e6; color: var(--ink); border-radius: 1px; font-family: var(--serif); box-shadow: 0 4px 10px rgba(42, 33, 27, 0.12); }
-.dr-tag::after { background: var(--gold); }
 .dr-name { font-family: var(--serif); font-size: 15px; }
 .dr-door { background: linear-gradient(90deg, #cbb8a3, #d8c7b3 40%, #c9b5a0); box-shadow: inset 0 0 0 10px #c2ad97, inset 0 0 0 11px rgba(255, 248, 238, 0.5), inset 0 0 70px rgba(80, 60, 44, 0.18); }
 .dr-handle { background: linear-gradient(90deg, #8a6b3f, #e3cc9c, #8a6b3f); width: 6px; }

@@ -9,12 +9,13 @@ Une page légère, sans 3D : elle s'ouvre de la même façon sur téléphone et 
    pierre. La visiteuse prend la clé : elle vole jusqu'à la serrure et tourne, les battants
    s'ouvrent sur la page d'accueil, et le mur s'efface. « Passer l'intro » et Échap
    permettent de l'éviter.
-2. **La cabine.** En haut de l'accueil, une pièce sur son cintre, sous une arche, change de
-   coloris toute seule ; pastilles de couleur, flèches et « Voir la pièce ».
+2. **La cabine.** En haut de l'accueil, une pièce sur son mannequin, sous une arche, change
+   de coloris toute seule ; pastilles de couleur, flèches et « Voir la pièce ».
 3. **Le défilé.** Toute la collection glisse lentement à l'écran ; au survol, la pièce
    montre un autre coloris ; un clic ouvre sa fiche.
-4. **Le dressing.** Une penderie tournante (en-tête, accueil, défilé) avec filtres et
-   fiches produit : coloris, taille, commande par e-mail.
+4. **Le dressing.** Un plateau tournant en marbre et or où les mannequins sont disposés en
+   cercle (en-tête, accueil, défilé), avec filtres et fiches produit : coloris, taille,
+   commande par e-mail.
 
 ## Voir le site
 
@@ -34,7 +35,8 @@ dans un seul fichier et s'ouvre directement par double-clic.
 | Les trois chiffres « Clientes » | `index.html`, section `clientes` : `data-count` **et** le nombre affiché |
 | Articles (nom, prix, coloris, tailles, description) | `js/catalogue.js` |
 | Pièces de la cabine | `FEATURED` en tête de la partie « fitting room » de `js/site.js` |
-| Dessins des vêtements | `js/garments.js` |
+| Photos des articles | `assets/products/` (WebP détouré, 820 × 1260, mannequin en bas au centre), référencées dans `js/catalogue.js` par coloris (`photo`) |
+| Dessins de secours (articles sans photo) | `js/garments.js` |
 | Mise en page, palette, typographie | `css/site.css` (variables en tête) |
 | Porte d'entrée et dressing | `js/intro.js`, `js/dressing.js` et `css/awrabaya.css` |
 
@@ -60,6 +62,7 @@ js/intro.js                Porte d'entrée
 js/dressing.js             Penderie tournante et fiches produit
 js/catalogue.js            Les articles
 js/garments.js             Dessins des vêtements
+assets/products/           Photos détourées des articles
 assets/brand/mark.svg      Le logo AWRABAYA
 assets/fonts/              Polices WOFF2
 sources/                   Logo d'origine et sa version vectorisée

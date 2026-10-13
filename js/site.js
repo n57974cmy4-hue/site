@@ -61,7 +61,7 @@
     }
 
     // ---------------------------------------------------------------- the fitting room
-    var FEATURED = ['nour', 'layla', 'yasmine', 'ines', 'sakina'].map(byId).filter(Boolean);
+    var FEATURED = ['mariniere', 'cape', 'nour', 'layla'].map(byId).filter(Boolean);
     var cabin = document.querySelector('.cabin');
     if (cabin && G && FEATURED.length) {
         var layers = cabin.querySelectorAll('.cabin-layer');
@@ -72,7 +72,7 @@
         function paint() {
             var p = FEATURED[piece], c = p.colors[colour];
             var next = layers[1 - front];
-            next.innerHTML = G.svg(p.type, c.hex, { label: p.name + ', ' + c.name });
+            next.innerHTML = G.figure(p, colour, { eager: true });
             next.classList.add('is-on');
             layers[front].classList.remove('is-on');
             front = 1 - front;
@@ -107,10 +107,13 @@
         cabin.querySelector('.cabin-see').addEventListener('click', see);
         cabin.querySelector('.cabin-garment').addEventListener('click', see);
         paint();
-        if (!reduce) timer = setInterval(advance, 3200);
+        FEATURED.forEach(function (p) {
+            p.colors.forEach(function (c) { if (c.photo) { var img = new Image(); img.src = c.photo; } });
+        });
+        if (!reduce) timer = setInterval(advance, 3600);
         document.addEventListener('visibilitychange', function () {
             clearInterval(timer);
-            if (!document.hidden && !reduce) timer = setInterval(advance, 3200);
+            if (!document.hidden && !reduce) timer = setInterval(advance, 3600);
         });
     }
 
@@ -120,7 +123,7 @@
         var card = function (p, hidden) {
             return '<button type="button" class="look"' + (hidden ? ' tabindex="-1" aria-hidden="true"' : '') +
                 ' data-id="' + p.id + '" aria-label="' + p.name + ', ' + euro(p.price) + '">' +
-                '<span class="look-frame">' + G.svg(p.type, p.colors[0].hex, { decorative: true }) + '</span>' +
+                '<span class="look-frame">' + G.figure(p, 0, { decorative: true }) + '</span>' +
                 '<span class="look-name" style="display:block">' + p.name + '</span>' +
                 '<span class="look-meta"><span class="look-price">' + euro(p.price) + '</span><span class="look-dots">' +
                 p.colors.map(function (c) { return '<i style="background:' + c.hex + '"></i>'; }).join('') + '</span></span></button>';
@@ -141,14 +144,14 @@
             var p = byId(look.dataset.id);
             if (!p || p.colors.length < 2) return;
             look._shown = true;
-            look.querySelector('.look-frame').innerHTML = G.svg(p.type, p.colors[1].hex, { decorative: true });
+            look.querySelector('.look-frame').innerHTML = G.figure(p, 1, { decorative: true });
         });
         track.addEventListener('mouseout', function (e) {
             var look = e.target.closest('.look');
             if (!look || !look._shown || look.contains(e.relatedTarget)) return;
             look._shown = false;
             var p = byId(look.dataset.id);
-            look.querySelector('.look-frame').innerHTML = G.svg(p.type, p.colors[0].hex, { decorative: true });
+            look.querySelector('.look-frame').innerHTML = G.figure(p, 0, { decorative: true });
         });
     }
 

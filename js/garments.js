@@ -155,5 +155,32 @@
             (options.hanger === false ? '' : HANGER) + draw(colour, options) + '</svg>';
     }
 
-    window.AwrabayaGarments = { svg: svg, shade: shade, luminance: luminance, types: Object.keys(DRAW) };
+    // A drawn piece on the same dress form as the photographs: linen neck, turned wooden
+    // cap and a gilded base. The frame matches the product photos (820 x 1260).
+    var FORM_BACK =
+        '<path d="M89 16h22l3 34H86z" fill="#e2d6c0"/><path d="M89 16h22l3 34H86z" fill="url(#awrShade)"/>' +
+        '<ellipse cx="100" cy="16" rx="12" ry="4" fill="#be9e76"/><ellipse cx="100" cy="11" rx="7" ry="3.2" fill="#aa8860"/>' +
+        '<circle cx="100" cy="6" r="2.6" fill="#967650"/>';
+    var FORM_BASE =
+        '<ellipse cx="100" cy="448" rx="62" ry="6" fill="#5a4230" opacity=".18"/>' +
+        '<rect x="44" y="428" width="112" height="16" rx="7" fill="#c4a060"/>' +
+        '<ellipse cx="100" cy="428" rx="56" ry="7" fill="#e8cd92"/>';
+    function figure(product, k, options) {
+        options = options || {};
+        var c = product.colors[k || 0] || product.colors[0];
+        var label = product.name + ', ' + c.name;
+        if (c.photo) {
+            return '<img class="garment garment-photo" src="' + c.photo + '" alt="' + (options.decorative ? '' : label) +
+                '" loading="' + (options.eager ? 'eager' : 'lazy') + '" decoding="async" draggable="false">';
+        }
+        ensureDefs();
+        var draw = DRAW[product.type] || DRAW.abaya;
+        return '<svg class="garment garment-drawn" viewBox="-53 -20 306 470"' +
+            (options.decorative ? ' aria-hidden="true" focusable="false"' : ' role="img"') + '>' +
+            (options.decorative ? '' : '<title>' + label + '</title>') +
+            FORM_BACK + '<g transform="translate(0 -2)">' + draw(c.hex, Object.assign({ trim: product.trim }, options)) + '</g>' +
+            FORM_BASE + '</svg>';
+    }
+
+    window.AwrabayaGarments = { svg: svg, figure: figure, shade: shade, luminance: luminance, types: Object.keys(DRAW) };
 })();

@@ -26,8 +26,16 @@ def inline_css(match: re.Match) -> str:
     return '<style>\n' + css + '\n</style>'
 
 
+def embed_photos(code: str) -> str:
+    """Product photos travel inside the file too."""
+    def uri(m: re.Match) -> str:
+        path = ROOT / m.group(0)
+        return 'data:image/webp;base64,' + base64.b64encode(path.read_bytes()).decode('ascii')
+    return re.sub(r'assets/products/[\w.-]+\.webp', uri, code)
+
+
 def inline_js(match: re.Match) -> str:
-    code = (ROOT / match.group(1)).read_text(encoding='utf-8')
+    code = embed_photos((ROOT / match.group(1)).read_text(encoding='utf-8'))
     if '</script' in code:
         raise SystemExit(f'{match.group(1)} contains a closing script tag')
     return '<script>\n' + code + '\n</script>'

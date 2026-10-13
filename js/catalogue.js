@@ -1,11 +1,23 @@
 /* Awrabaya — catalogue du dressing.
-   Exemples à remplacer par vos vrais articles. Pour chaque pièce :
-     type     : abaya, papillon, kimono, robe, khimar, ensemble ou kaftan (le dessin)
+   Pour chaque pièce :
+     type     : abaya, papillon, kimono, robe, khimar, ensemble ou kaftan (le dessin de secours)
      category : abayas, robes, khimars ou ensembles (les filtres du dressing)
      price    : prix en euros
-     colors   : nom et teinte de chaque coloris proposé
-     sizes    : tailles proposées */
+     colors   : nom, teinte et, si elle existe, photo de chaque coloris
+                (photo détourée au format 820 x 1260, dans assets/products/)
+     sizes    : tailles proposées
+   Les deux premières pièces utilisent vos photos ; les suivantes sont des exemples dessinés,
+   à remplacer par vos articles. Les prix et tailles des deux premières sont à confirmer. */
 window.AWRABAYA_CATALOGUE = [
+    { id: 'mariniere', name: 'Abaya Marinière', type: 'abaya', category: 'abayas', price: 34.90,
+      description: 'Abaya ample à rayures, col rond et grandes manches évasées. Une coupe trapèze fluide qui tombe jusqu\'aux chevilles, pour le quotidien.',
+      colors: [{ name: 'Bleu marine', hex: '#1f2a44', photo: 'assets/products/abaya-mariniere-marine.webp' },
+               { name: 'Noir', hex: '#1c1a1a', photo: 'assets/products/abaya-mariniere-noir.webp' }],
+      sizes: ['Taille unique'] },
+    { id: 'cape', name: 'Ensemble Cape & Jupe', type: 'ensemble', category: 'ensembles', price: 49.90,
+      description: 'Ensemble molletonné tout doux : cape à col montant et cordon, manches évasées, et jupe longue évasée à taille élastique.',
+      colors: [{ name: 'Écru', hex: '#ece4d4', photo: 'assets/products/ensemble-cape-ecru.webp' }],
+      sizes: ['Taille unique'] },
     { id: 'nour', name: 'Abaya Nour', type: 'abaya', category: 'abayas', price: 39.90,
       description: 'Abaya fluide en crêpe, coupe évasée et manches amples, liseré doré sur le devant.',
       colors: [{ name: 'Noir', hex: '#211a16' }, { name: 'Taupe', hex: '#8c7766' }, { name: 'Sable', hex: '#cdb89b' }],

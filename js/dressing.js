@@ -1,6 +1,6 @@
 /* Awrabaya — the rotating dressing.
    A boutique carousel rack seen in perspective: the pieces hang on a brass ring that
-   turns under the visitor's hand (drag, swipe, wheel, arrows), swing on their hangers
+   turns under the visitor's hand (drag, swipe, wheel, arrows), standing on their dress forms
    with the rotation, and open into a product sheet with colours, sizes and an order
    button. Built with CSS 3D transforms; the catalogue lives in js/catalogue.js. */
 (function () {
@@ -20,7 +20,7 @@
     root.innerHTML =
         '<div class="dr-room" aria-hidden="true"></div>' +
         '<header class="dr-top">' +
-        '<div class="dr-title"><p class="dr-eyebrow">Awrabaya · la penderie</p><h2 id="dr-title">Le dressing</h2></div>' +
+        '<div class="dr-title"><p class="dr-eyebrow">Awrabaya · la vitrine</p><h2 id="dr-title">Le dressing</h2></div>' +
         '<div class="dr-filters" role="tablist" aria-label="Catégories">' +
         CATEGORIES.map(function (c, i) {
             return '<button type="button" role="tab" class="dr-chip' + (i ? '' : ' is-active') + '" data-cat="' + c.id + '" aria-selected="' + (i ? 'false' : 'true') + '">' + esc(c.label) + '</button>';
@@ -39,7 +39,7 @@
         '<button type="button" class="dr-see">Voir la pièce <span aria-hidden="true">&#8599;</span></button>' +
         '<button type="button" class="dr-arrow dr-next" aria-label="Pièce suivante">&#8594;</button>' +
         '</div>' +
-        '<p class="dr-hint">Faites tourner la penderie du bout du doigt</p>' +
+        '<p class="dr-hint">Faites tourner le plateau du bout du doigt</p>' +
         '<div class="dr-doors" aria-hidden="true"><div class="dr-door dr-door-left"><span class="dr-handle"></span></div>' +
         '<div class="dr-door dr-door-right"><span class="dr-handle"></span></div></div>' +
         '<aside class="dr-panel" aria-labelledby="dr-panel-name" aria-hidden="true">' +
@@ -71,63 +71,63 @@
     var picked = {};                     // colour index chosen per piece, shared with the sheet
     var TILT = -9, PERSPECTIVE = 1500;
 
+    // The pieces stand on a round plinth that turns: each one faces outwards, the one in
+    // front is full size and bright, the others recede around the circle.
     function layout() {
         var w = stage.clientWidth, h = stage.clientHeight;
-        itemW = Math.max(118, Math.min(215, w * 0.16, h * 0.4));
-        itemH = itemW * 2.15;
+        itemW = Math.max(120, Math.min(250, w * 0.17, (h - 70) * 0.62));
+        itemH = itemW * 1.537;
         var n = Math.max(items.length, 3);
-        radius = Math.max(itemW * n / (2 * Math.PI) * (w < 700 ? 1.04 : 1.18), itemW * 1.15);
-        radius = Math.min(radius, w * 0.42 + itemW * 0.8);
+        radius = Math.max(itemW * n / (2 * Math.PI) * (w < 700 ? 0.92 : 1.0), itemW * 1.1);
+        radius = Math.min(radius, w * 0.40 + itemW * 0.7);
         root.style.setProperty('--item-w', itemW + 'px');
-        var railY = Math.max(56, (h - itemH * 1.06) * 0.5);
-        root.style.setProperty('--rail-y', railY + 'px');
-        root.style.setProperty('--floor-y', (stage.offsetTop + railY + itemH * 0.97) + 'px');
+        root.style.setProperty('--item-h', itemH + 'px');
+        var floorY = Math.min(h - 60, Math.max(itemH + 30, (h + itemH) / 2 + 6));
+        root.style.setProperty('--rail-y', floorY + 'px');
+        root.style.setProperty('--floor-y', (stage.offsetTop + floorY + 30) + 'px');
         nodes.forEach(function (node, i) {
             node.style.transform = 'rotateY(' + (i * step) + 'deg) translateZ(' + radius + 'px)';
         });
-        drawRing();
+        drawPlinth();
     }
 
-    // The brass rail, projected with the same perspective as the CSS scene, split into
-    // the arc behind the pieces and the arc in front of them.
-    function drawRing() {
+    // The plinth, projected with the same perspective as the CSS scene: its top behind the
+    // pieces, its gilded front edge in front of their feet.
+    function drawPlinth() {
         var w = stage.clientWidth, h = stage.clientHeight;
-        var railY = parseFloat(getComputedStyle(root).getPropertyValue('--rail-y')) || 80;
-        var ox = w / 2, oy = railY + itemH * 0.42;
-        var t = TILT * Math.PI / 180, back = [], frontArc = [];
-        // the carousel is pushed back by its radius so the front piece keeps its size
+        var floorY = parseFloat(getComputedStyle(root).getPropertyValue('--rail-y')) || 300;
+        var ox = w / 2, oy = floorY - itemH * 0.45;
+        var t = TILT * Math.PI / 180;
         function project(r, y, a) {
             var x = r * Math.sin(a), z = r * Math.cos(a) - radius;
             var y2 = y * Math.cos(t) - z * Math.sin(t), z2 = y * Math.sin(t) + z * Math.cos(t);
             var s = PERSPECTIVE / (PERSPECTIVE - z2);
-            return [ox + x * s, oy + (railY + y2 - oy) * s, Math.cos(a)];
+            return [ox + x * s, oy + (floorY + y2 - oy) * s, Math.cos(a)];
         }
-        for (var k = 0; k <= 96; k++) {
-            var p = project(radius, 0, k / 96 * Math.PI * 2);
-            (p[2] < 0 ? back : frontArc).push(p);
-        }
-        var toPath = function (pts) {
-            // order along the angle and break where the arc wraps around
-            return pts.length ? 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L') : '';
+        var R = radius + itemW * 0.42, depth = Math.max(16, itemW * 0.13);
+        var ring = function (r, y, from, to, steps) {
+            var pts = [];
+            for (var k = 0; k <= steps; k++) pts.push(project(r, y, from + (to - from) * k / steps));
+            return pts;
         };
-        var floorY = itemH * 1.0, shadow = [];
-        for (var j = 0; j < 64; j++) shadow.push(project(radius * 0.92, floorY, j / 64 * Math.PI * 2));
-        var top = project(0, -itemH * 0.08, 0), base = project(0, floorY, 0);
-        var frontSorted = frontArc.slice().sort(function (a, b) { return a[0] - b[0]; });
-        var backSorted = back.slice().sort(function (a, b) { return a[0] - b[0]; });
+        var path = function (pts) { return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(''); };
+        var top = ring(R, 0, 0, Math.PI * 2, 120);
+        var frontTop = ring(R, 0, -Math.PI / 2, Math.PI / 2, 60);
+        var frontBottom = ring(R, depth, Math.PI / 2, -Math.PI / 2, 60);
+        var inner = ring(R * 0.9, 0, 0, Math.PI * 2, 120);
+        var shadow = ring(R * 1.04, depth + 18, 0, Math.PI * 2, 90);
         ringBack.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
         ringFront.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
         ringBack.innerHTML =
-            '<path d="' + toPath(shadow) + 'Z" fill="#7a5f4c" opacity=".16" filter="url(#drBlur)"/>' +
-            '<defs><filter id="drBlur" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>' +
-            '<linearGradient id="drBrass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9c7740"/><stop offset=".5" stop-color="#ecd29a"/><stop offset="1" stop-color="#9c7740"/></linearGradient></defs>' +
-            '<path d="M' + top[0] + ' ' + (top[1] - 40) + 'V' + base[1] + '" stroke="#b8945c" stroke-width="6" stroke-linecap="round"/>' +
-            '<ellipse cx="' + base[0] + '" cy="' + base[1] + '" rx="' + (itemW * 0.55) + '" ry="' + (itemW * 0.09) + '" fill="#b08f6a"/>' +
-            '<path d="' + toPath(backSorted) + '" fill="none" stroke="#a88552" stroke-width="5" stroke-linecap="round"/>';
+            '<defs><filter id="drBlur" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="16"/></filter>' +
+            '<radialGradient id="drMarble" cx=".5" cy=".35" r=".75"><stop offset="0" stop-color="#fdfaf5"/><stop offset=".7" stop-color="#efe6d8"/><stop offset="1" stop-color="#e2d5c2"/></radialGradient></defs>' +
+            '<path d="' + path(shadow) + 'Z" fill="#6a5040" opacity=".22" filter="url(#drBlur)"/>' +
+            '<path d="' + path(top) + 'Z" fill="url(#drMarble)"/>' +
+            '<path d="' + path(inner) + 'Z" fill="none" stroke="#c9ad7d" stroke-opacity=".55" stroke-width="1"/>';
         ringFront.innerHTML =
-            '<path d="' + toPath(frontSorted) + '" fill="none" stroke="url(#drBrassF)" stroke-width="6" stroke-linecap="round"/>' +
-            '<defs><linearGradient id="drBrassF" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a7834c"/><stop offset=".5" stop-color="#f1dcaa"/><stop offset="1" stop-color="#a7834c"/></linearGradient></defs>' +
-            '<ellipse cx="' + top[0] + '" cy="' + (top[1] - 40) + '" rx="16" ry="6" fill="url(#drBrassF)"/>';
+            '<defs><linearGradient id="drGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8f6f40"/><stop offset=".45" stop-color="#e9d39f"/><stop offset=".55" stop-color="#d6b97f"/><stop offset="1" stop-color="#8f6f40"/></linearGradient></defs>' +
+            '<path d="' + path(frontTop) + path(frontBottom).replace('M', 'L') + 'Z" fill="url(#drGold)"/>' +
+            '<path d="' + path(frontTop) + '" fill="none" stroke="#f6e7c4" stroke-width="1.2" stroke-opacity=".8"/>';
         stage.style.perspective = PERSPECTIVE + 'px';
         stage.style.perspectiveOrigin = ox + 'px ' + oy + 'px';
     }
@@ -139,7 +139,7 @@
         step = 360 / Math.max(items.length, 3);
         carousel.innerHTML = items.map(function (p, i) {
             return '<div class="dr-item" data-i="' + i + '" role="button" tabindex="-1" aria-label="' + esc(p.name) + ', ' + euro(p.price) + '">' +
-                '<div class="dr-swing"><div class="dr-garment">' + G.svg(p.type, colourOf(p), { decorative: true }) + '</div>' +
+                '<div class="dr-swing"><div class="dr-garment">' + G.figure(p, picked[p.id] || 0, { decorative: true, eager: i < 4 }) + '</div>' +
                 '<span class="dr-tag">' + euro(p.price) + '</span></div>' +
                 '<p class="dr-name">' + esc(p.name) + '</p></div>';
         }).join('');
@@ -171,11 +171,6 @@
                 else goal = Math.round(theta / step) * step;
             }
         }
-        var speed = (theta - prev) / dt;
-        // hangers swing against the rotation: a damped spring
-        var target = Math.max(-16, Math.min(16, -speed * 2.2));
-        swingVel += ((target - swing) * 0.08 - swingVel * 0.16) * dt;
-        swing += swingVel * dt;
         carousel.style.transform = 'translateZ(' + (-radius) + 'px) rotateY(' + theta + 'deg)';
         for (var i = 0; i < nodes.length; i++) {
             var a = norm(theta + i * step);
@@ -183,8 +178,6 @@
             var node = nodes[i];
             var dim = Math.round((0.62 + 0.38 * Math.max(0, facing)) * 50) / 50;
             if (node._dim !== dim) { node._dim = dim; node.style.setProperty('--dim', dim); }
-            var sw = (swing * (1 + 0.18 * Math.sin(i * 1.7))).toFixed(2);
-            if (node._sw !== sw) { node._sw = sw; node.firstChild.style.transform = 'rotateZ(' + sw + 'deg)'; }
         }
         var k = ((Math.round(-theta / step) % items.length) + items.length) % items.length;
         if (k !== front) setFront(k);
@@ -294,7 +287,7 @@
     }
     function renderChoice() {
         var p = current, c = p.colors[choice.color];
-        panel.querySelector('.dr-panel-art').innerHTML = G.svg(p.type, c.hex, { label: p.name + ', ' + c.name });
+        panel.querySelector('.dr-panel-art').innerHTML = G.figure(p, choice.color, { eager: true });
         panel.querySelector('.dr-color-name').textContent = c.name;
         panel.querySelectorAll('.dr-swatch').forEach(function (b) {
             var on = Number(b.dataset.k) === choice.color;
@@ -311,7 +304,7 @@
             choice.color = Number(sw.dataset.k);
             picked[current.id] = choice.color;
             var i = items.indexOf(current);
-            if (nodes[i]) nodes[i].querySelector('.dr-garment').innerHTML = G.svg(current.type, current.colors[choice.color].hex, { decorative: true });
+            if (nodes[i]) nodes[i].querySelector('.dr-garment').innerHTML = G.figure(current, choice.color, { decorative: true, eager: true });
             renderChoice();
         } else if (sz) {
             choice.size = sz.dataset.s;
