@@ -1,0 +1,758 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Carnet de Hifz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+<style>
+/* Layout: one reading column like a mushaf page; sticky header with tabs; each daily task is a card named by its hifz term. */
+:root {
+  --bg: #EDF1EE; --surface: #FFFFFF; --surface-2: #E2E9E4; --ink: #17252A; --muted: #586966; --line: #D0DAD5;
+  --accent: #15654E; --accent-ink: #FFFFFF; --accent-soft: #D4E8DF;
+  --gold: #8E6B22; --gold-soft: #F0E5CA;
+  --warn: #9C5A0B; --warn-soft: #F5E4CB; --bad: #A3362F; --bad-soft: #F4D9D5;
+  --f-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-ar: "Amiri", "Noto Naskh Arabic", "Geeza Pro", serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D1514; --surface: #142020; --surface-2: #1B2928; --ink: #E2ECE8; --muted: #93A6A1; --line: #283A37;
+  --accent: #4DBD96; --accent-ink: #052219; --accent-soft: #173A30;
+  --gold: #D8B565; --gold-soft: #3A3020;
+  --warn: #E2A35A; --warn-soft: #3A2B17; --bad: #EE8B80; --bad-soft: #3D211F; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D1514; --surface: #142020; --surface-2: #1B2928; --ink: #E2ECE8; --muted: #93A6A1; --line: #283A37;
+  --accent: #4DBD96; --accent-ink: #052219; --accent-soft: #173A30;
+  --gold: #D8B565; --gold-soft: #3A3020;
+  --warn: #E2A35A; --warn-soft: #3A2B17; --bad: #EE8B80; --bad-soft: #3D211F; color-scheme: dark }
+
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+html, body { margin: 0 }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body); -webkit-font-smoothing: antialiased }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+button, input, select, textarea { font: inherit; color: inherit }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.ar { font-family: var(--f-ar); direction: rtl; unicode-bidi: isolate }
+.num { font-variant-numeric: tabular-nums }
+
+.wrap { max-width: 720px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line) }
+header.top .wrap { padding-block: 14px 0; display: grid; gap: 10px }
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap }
+.brand h1 { margin: 0; font: 600 1.5rem/1.1 var(--f-display); letter-spacing: -.01em }
+.brand h1 .ar { font-size: 1.25rem; color: var(--gold); margin-left: 10px; font-weight: 700 }
+.dates { color: var(--muted); font-size: .85rem; text-align: end }
+.dates .hijri { color: var(--gold) }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none }
+nav.tabs a { padding: 8px 12px 10px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: .92rem; border-bottom: 2px solid transparent; white-space: nowrap }
+nav.tabs a[aria-current="page"] { color: var(--ink); border-color: var(--accent) }
+
+main .wrap { padding-block: 20px 96px; display: grid; gap: 16px }
+section[data-view] { display: grid; gap: 16px }
+
+.daybar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap }
+.daybar .lbl { font-weight: 600 }
+.daybar .meter { flex: 1 1 160px; height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden }
+.daybar .meter i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s }
+.daybar .streak { color: var(--muted); font-size: .9rem }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; min-width: 0 }
+.card.done { background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface)) }
+.card-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px }
+.eyebrow { font-size: .74rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); display: flex; align-items: baseline; gap: 8px }
+.eyebrow .ar { font-size: 1.05rem; letter-spacing: 0; text-transform: none; color: var(--gold); font-weight: 700 }
+.card h2 { margin: 2px 0 0; font: 600 1.3rem/1.25 var(--f-display); text-wrap: balance }
+.card h2 .ar { font-size: 1.15em; margin-left: 8px; color: var(--muted); font-weight: 400 }
+.card p { margin: 0 }
+.sub { color: var(--muted); font-size: .9rem }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: .78rem; font-weight: 600; white-space: nowrap; background: var(--surface-2); color: var(--muted) }
+.chip.ok { background: var(--accent-soft); color: var(--accent) }
+.chip.gold { background: var(--gold-soft); color: var(--gold) }
+.chip.warn { background: var(--warn-soft); color: var(--warn) }
+.chip.bad { background: var(--bad-soft); color: var(--bad) }
+
+.verse-range { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 1.05rem }
+.verse-range b { font: 600 2rem/1 var(--f-display); font-variant-numeric: tabular-nums }
+.bar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px }
+.bar.gold i { background: var(--gold) }
+
+.row-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 9px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; line-height: 1.2 }
+.btn:hover { border-color: var(--accent) }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.btn.primary:hover { filter: brightness(1.08) }
+.btn.ghost { background: transparent }
+.btn.small { padding: 6px 10px; font-size: .85rem; border-radius: 8px }
+.btn.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, var(--line)) }
+.btn.danger.armed { background: var(--bad); color: var(--surface); border-color: var(--bad) }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent) }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface) }
+.stepper button { border: 0; background: transparent; width: 36px; height: 38px; cursor: pointer; font-size: 1.1rem; color: var(--muted) }
+.stepper input { width: 48px; border: 0; text-align: center; background: transparent; font-weight: 700; font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield }
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0 }
+
+.list { display: grid; gap: 0; border-top: 1px solid var(--line) }
+.item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line) }
+.item:last-child { border-bottom: 0 }
+.item .n { width: 34px; height: 34px; display: grid; place-items: center; font-size: .82rem; font-weight: 700; color: var(--gold); border: 1px solid var(--gold-soft); border-radius: 50%; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--gold-soft) 40%, transparent) }
+.item .t { min-width: 0 }
+.item .t strong { font-weight: 600 }
+.item .t .ar { color: var(--muted); margin-left: 8px }
+.item.rate { grid-template-columns: auto 1fr }
+.item.rate .grades { grid-column: 2; justify-content: flex-start }
+.item .t .sub { display: block; font-size: .82rem }
+.item.is-done .t strong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line) }
+.grades { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end }
+.check { width: 30px; height: 30px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--surface); cursor: pointer; display: grid; place-items: center; color: transparent; font-weight: 700 }
+.check[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+.empty { color: var(--muted); font-size: .92rem; padding: 4px 0 }
+
+.quick { background: var(--gold-soft); border-color: transparent }
+.quick h2 { font-size: 1.1rem }
+
+/* Sourates */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.search { flex: 1 1 220px; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 12px }
+.seg { display: flex; gap: 6px; flex-wrap: wrap }
+.seg button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: .85rem; font-weight: 600; cursor: pointer; color: var(--muted) }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink) }
+.surahs { display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden }
+.surahs details { border-bottom: 1px solid var(--line) }
+.surahs details:last-child { border-bottom: 0 }
+.surahs summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 11px 14px }
+.surahs summary::-webkit-details-marker { display: none }
+.surahs summary:hover { background: color-mix(in srgb, var(--surface-2) 50%, transparent) }
+.surahs .meta { min-width: 0; display: grid; gap: 5px }
+.surahs .meta .line1 { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap }
+.surahs .meta .ar { color: var(--muted); font-size: 1.05rem }
+.surahs .meta .sub { font-size: .8rem }
+.editor { padding: 4px 14px 16px 60px; display: grid; gap: 12px }
+.editor label { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+@media (max-width: 480px) { .editor { padding-left: 14px } }
+
+/* Progression */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px }
+@media (max-width: 600px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 2px }
+.stat b { font: 600 1.7rem/1.1 var(--f-display); font-variant-numeric: tabular-nums }
+.stat span { color: var(--muted); font-size: .82rem }
+.stat .bar { margin-top: 8px }
+.juz { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px }
+@media (max-width: 480px) { .juz { grid-template-columns: repeat(6, minmax(0, 1fr)) } }
+.juz div { aspect-ratio: 1; max-width: 100%; border-radius: 9px; display: grid; place-items: center; font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums; border: 1px solid var(--line); position: relative; overflow: hidden; color: var(--ink) }
+.juz div i { position: absolute; inset: auto 0 0; background: color-mix(in srgb, var(--accent) 55%, transparent) }
+.juz div span { position: relative }
+.juz div.full { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.heat-wrap { overflow-x: auto }
+.heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); gap: 3px; width: max-content }
+.heat i { width: 13px; height: 13px; border-radius: 3px; background: var(--surface-2) }
+.heat i[data-l="1"] { background: color-mix(in srgb, var(--accent) 35%, var(--surface-2)) }
+.heat i[data-l="2"] { background: color-mix(in srgb, var(--accent) 65%, var(--surface-2)) }
+.heat i[data-l="3"] { background: var(--accent) }
+.heat i.future { background: transparent }
+.legend { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: .8rem; flex-wrap: wrap }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; background: var(--surface-2) }
+
+/* Réglages */
+.form { display: grid; gap: 14px }
+.field { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center }
+.field .sub { grid-column: 1 / -1 }
+.field select { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 10px; max-width: 100% }
+@media (max-width: 480px) { .field { grid-template-columns: 1fr } }
+textarea { width: 100%; min-height: 110px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); padding: 10px; font: .8rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical }
+.sync { font-size: .8rem; color: var(--muted); text-align: center }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: .25s; background: var(--ink); color: var(--bg); padding: 10px 12px 10px 16px; border-radius: 12px; display: flex; gap: 12px; align-items: center; max-width: calc(100% - 32px); z-index: 20; font-size: .92rem }
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto }
+.toast button { background: transparent; border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); color: var(--bg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font-weight: 600 }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Carnet de Hifz<span class="ar" lang="ar">حفظ</span></h1>
+      <div class="dates"><div id="date-g"></div><div class="hijri" id="date-h"></div></div>
+    </div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#aujourdhui" data-tab="aujourdhui">Aujourd'hui</a>
+      <a href="#sourates" data-tab="sourates">Sourates</a>
+      <a href="#progression" data-tab="progression">Progression</a>
+      <a href="#reglages" data-tab="reglages">Réglages</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section data-view="aujourdhui" id="v-today"></section>
+    <section data-view="sourates" id="v-surahs" hidden>
+      <div class="filters">
+        <input class="search" id="q" type="search" placeholder="Chercher une sourate (nom ou numéro)" aria-label="Chercher une sourate">
+        <div class="seg" id="seg">
+          <button data-f="all" aria-pressed="true">Toutes</button>
+          <button data-f="done" aria-pressed="false">Mémorisées</button>
+          <button data-f="part" aria-pressed="false">En cours</button>
+          <button data-f="todo" aria-pressed="false">À apprendre</button>
+          <button data-f="weak" aria-pressed="false">À renforcer</button>
+        </div>
+      </div>
+      <div class="surahs" id="surah-list"></div>
+    </section>
+    <section data-view="progression" id="v-stats" hidden></section>
+    <section data-view="reglages" id="v-settings" hidden></section>
+    <p class="sync" id="sync">Enregistré sur cet appareil</p>
+  </div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button id="toast-undo" type="button">Annuler</button></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ---------- Données : nom, nom arabe, nombre de versets, page de début (mushaf de Médine, 604 pages) ---------- */
+const RAW = [
+["Al-Fâtiha","الفاتحة",7,1],["Al-Baqara","البقرة",286,2],["Âl ʿImrân","آل عمران",200,50],["An-Nisâʾ","النساء",176,77],
+["Al-Mâʾida","المائدة",120,106],["Al-Anʿâm","الأنعام",165,128],["Al-Aʿrâf","الأعراف",206,151],["Al-Anfâl","الأنفال",75,177],
+["At-Tawba","التوبة",129,187],["Yûnus","يونس",109,208],["Hûd","هود",123,221],["Yûsuf","يوسف",111,235],
+["Ar-Raʿd","الرعد",43,249],["Ibrâhîm","إبراهيم",52,255],["Al-Hijr","الحجر",99,262],["An-Nahl","النحل",128,267],
+["Al-Isrâʾ","الإسراء",111,282],["Al-Kahf","الكهف",110,293],["Maryam","مريم",98,305],["Tâ-Hâ","طه",135,312],
+["Al-Anbiyâʾ","الأنبياء",112,322],["Al-Hajj","الحج",78,332],["Al-Muʾminûn","المؤمنون",118,342],["An-Nûr","النور",64,350],
+["Al-Furqân","الفرقان",77,359],["Ash-Shuʿarâʾ","الشعراء",227,367],["An-Naml","النمل",93,377],["Al-Qasas","القصص",88,385],
+["Al-ʿAnkabût","العنكبوت",69,396],["Ar-Rûm","الروم",60,404],["Luqmân","لقمان",34,411],["As-Sajda","السجدة",30,415],
+["Al-Ahzâb","الأحزاب",73,418],["Sabaʾ","سبأ",54,428],["Fâtir","فاطر",45,434],["Yâ-Sîn","يس",83,440],
+["As-Sâffât","الصافات",182,446],["Sâd","ص",88,453],["Az-Zumar","الزمر",75,458],["Ghâfir","غافر",85,467],
+["Fussilat","فصلت",54,477],["Ash-Shûrâ","الشورى",53,483],["Az-Zukhruf","الزخرف",89,489],["Ad-Dukhân","الدخان",59,496],
+["Al-Jâthiya","الجاثية",37,499],["Al-Ahqâf","الأحقاف",35,502],["Muhammad","محمد",38,507],["Al-Fath","الفتح",29,511],
+["Al-Hujurât","الحجرات",18,515],["Qâf","ق",45,518],["Adh-Dhâriyât","الذاريات",60,520],["At-Tûr","الطور",49,523],
+["An-Najm","النجم",62,526],["Al-Qamar","القمر",55,528],["Ar-Rahmân","الرحمن",78,531],["Al-Wâqiʿa","الواقعة",96,534],
+["Al-Hadîd","الحديد",29,537],["Al-Mujâdila","المجادلة",22,542],["Al-Hashr","الحشر",24,545],["Al-Mumtahana","الممتحنة",13,549],
+["As-Saff","الصف",14,551],["Al-Jumuʿa","الجمعة",11,553],["Al-Munâfiqûn","المنافقون",11,554],["At-Taghâbun","التغابن",18,556],
+["At-Talâq","الطلاق",12,558],["At-Tahrîm","التحريم",12,560],["Al-Mulk","الملك",30,562],["Al-Qalam","القلم",52,564],
+["Al-Hâqqa","الحاقة",52,566],["Al-Maʿârij","المعارج",44,568],["Nûh","نوح",28,570],["Al-Jinn","الجن",28,572],
+["Al-Muzzammil","المزمل",20,574],["Al-Muddaththir","المدثر",56,575],["Al-Qiyâma","القيامة",40,577],["Al-Insân","الإنسان",31,578],
+["Al-Mursalât","المرسلات",50,580],["An-Nabaʾ","النبأ",40,582],["An-Nâziʿât","النازعات",46,583],["ʿAbasa","عبس",42,585],
+["At-Takwîr","التكوير",29,586],["Al-Infitâr","الانفطار",19,587],["Al-Mutaffifîn","المطففين",36,587],["Al-Inshiqâq","الانشقاق",25,589],
+["Al-Burûj","البروج",22,590],["At-Târiq","الطارق",17,591],["Al-Aʿlâ","الأعلى",19,591],["Al-Ghâshiya","الغاشية",26,592],
+["Al-Fajr","الفجر",30,593],["Al-Balad","البلد",20,594],["Ash-Shams","الشمس",15,595],["Al-Layl","الليل",21,595],
+["Ad-Duhâ","الضحى",11,596],["Ash-Sharh","الشرح",8,596],["At-Tîn","التين",8,597],["Al-ʿAlaq","العلق",19,597],
+["Al-Qadr","القدر",5,598],["Al-Bayyina","البينة",8,598],["Az-Zalzala","الزلزلة",8,599],["Al-ʿÂdiyât","العاديات",11,599],
+["Al-Qâriʿa","القارعة",11,600],["At-Takâthur","التكاثر",8,600],["Al-ʿAsr","العصر",3,601],["Al-Humaza","الهمزة",9,601],
+["Al-Fîl","الفيل",5,601],["Quraysh","قريش",4,602],["Al-Mâʿûn","الماعون",7,602],["Al-Kawthar","الكوثر",3,602],
+["Al-Kâfirûn","الكافرون",6,603],["An-Nasr","النصر",3,603],["Al-Masad","المسد",5,603],["Al-Ikhlâs","الإخلاص",4,604],
+["Al-Falaq","الفلق",5,604],["An-Nâs","الناس",6,604]];
+const PAGES = 604;
+const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[ʿʾ'’\-\s]/g, '').toLowerCase();
+const SUR = RAW.map((r, i) => ({ n: i + 1, name: r[0], ar: r[1], v: r[2], page: r[3], key: fold(r[0]) }));
+// Pages approximatives : les sourates qui commencent sur la même page se partagent l'espace jusqu'à la suivante, au prorata des versets.
+for (let i = 0; i < SUR.length;) {
+  let j = i; while (j + 1 < SUR.length && SUR[j + 1].page === SUR[i].page) j++;
+  const next = j + 1 < SUR.length ? SUR[j + 1].page : PAGES + 1;
+  const span = next - SUR[i].page, vs = SUR.slice(i, j + 1).reduce((a, s) => a + s.v, 0);
+  for (let k = i; k <= j; k++) SUR[k].pages = span * SUR[k].v / vs;
+  i = j + 1;
+}
+let acc = 0; for (const s of SUR) { s.pos = acc; acc += s.pages; }
+const juzOfPage = p => p < 22 ? 1 : Math.min(30, Math.floor((p - 22) / 20) + 2);
+const juzStart = j => j === 1 ? 0 : 21 + 20 * (j - 2);
+const juzEnd = j => j === 30 ? PAGES : juzStart(j + 1);
+for (const s of SUR) s.juz = juzOfPage(s.page);
+const TOTAL_V = SUR.reduce((a, s) => a + s.v, 0);
+const sur = n => SUR[n - 1];
+const surahAtPage = p => { let r = SUR[0]; for (const s of SUR) { if (s.page <= p) r = s; else break; } return r; };
+
+/* ---------- Dates ---------- */
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const today = () => iso(new Date());
+const dnum = s => { const [y, m, d] = s.split('-').map(Number); return Math.round(Date.UTC(y, m - 1, d) / 864e5); };
+const addDays = (s, k) => { const [y, m, d] = s.split('-').map(Number); return iso(new Date(y, m - 1, d + k)); };
+const fmtDate = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); };
+const rel = s => { const k = dnum(s) - dnum(today()); if (k === 0) return "aujourd'hui"; if (k === 1) return 'demain'; if (k === -1) return 'hier'; return k > 0 ? 'dans ' + k + ' j' : 'il y a ' + (-k) + ' j'; };
+
+/* ---------- État ---------- */
+const KEY = 'carnet-hifz-v1';
+const DEFAULTS = { newVerses: 5, revisePages: 3, readPages: 5, order: 'amma', recentDays: 30, maxIv: 30 };
+const fresh = () => ({ v: 1, savedAt: 0, settings: { ...DEFAULTS }, s: {}, current: null, read: { page: 1, khatm: 0 }, log: {}, plan: null });
+function normalize(o) {
+  const f = fresh();
+  if (!o || typeof o !== 'object') return f;
+  return { ...f, ...o, settings: { ...DEFAULTS, ...(o.settings || {}) }, read: { ...f.read, ...(o.read || {}) }, s: o.s || {}, log: o.log || {} };
+}
+let st = (() => { try { return normalize(JSON.parse(localStorage.getItem(KEY))); } catch (e) { return fresh(); } })();
+let remote = null, syncTimer = null;
+
+function setSync(t) { document.getElementById('sync').textContent = t; }
+function persist() {
+  st.savedAt = Date.now();
+  const cut = addDays(today(), -400);
+  for (const d in st.log) if (d < cut) delete st.log[d];
+  try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+  if (remote) {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      remote.set(JSON.parse(JSON.stringify(st)))
+        .then(() => setSync('Enregistré sur ton compte'))
+        .catch(() => setSync('Enregistré sur cet appareil seulement'));
+    }, 600);
+  }
+}
+async function connect() {
+  if (!window.claude || !window.claude.use) return;
+  try {
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return;
+    const id = await user.id();
+    if (!id) return;
+    const ref = db.doc('data/users/' + id + '/hifz');
+    const snap = await ref.get();
+    if (snap.exists) {
+      const d = JSON.parse(JSON.stringify(snap.data()));
+      if ((d.savedAt || 0) > (st.savedAt || 0)) {
+        st = normalize(d);
+        try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+        render();
+      } else if (st.savedAt > (d.savedAt || 0)) await ref.set(JSON.parse(JSON.stringify(st)));
+    } else if (st.savedAt) await ref.set(JSON.parse(JSON.stringify(st)));
+    remote = ref;
+    setSync('Enregistré sur ton compte');
+  } catch (e) { /* on reste sur l'appareil */ }
+}
+
+/* ---------- Logique ---------- */
+const S = n => st.s[n] || (st.s[n] = {});
+const learned = n => (st.s[n] && st.s[n].k) || 0;
+const isDone = n => learned(n) >= sur(n).v;
+const L = d => st.log[d] || (st.log[d] = { l: 0, r: 0, t: 0 });
+function orderList() {
+  const o = st.settings.order, a = [];
+  if (o === 'asc') for (let i = 1; i <= 114; i++) a.push(i);
+  else if (o === 'desc') for (let i = 114; i >= 1; i--) a.push(i);
+  else { a.push(1); for (let i = 114; i >= 78; i--) a.push(i); for (let i = 2; i <= 77; i++) a.push(i); }
+  return a;
+}
+function currentSurah() {
+  if (st.current && !isDone(st.current)) return st.current;
+  const n = orderList().find(x => !isDone(x)) || null;
+  st.current = n;
+  return n;
+}
+function nextAfter(cur) {
+  const o = orderList().filter(x => !isDone(x) && x !== cur);
+  return o[0] || null;
+}
+function recentList() {
+  const t = today(), win = st.settings.recentDays, out = [];
+  for (const s of SUR) {
+    const x = st.s[s.n];
+    if (!x || !x.k) continue;
+    if (isDone(s.n)) { if (x.d && dnum(t) - dnum(x.d) < win) out.push(s.n); }
+    else out.push(s.n); // partie déjà apprise de la sourate en cours
+  }
+  return out.sort((a, b) => ((st.s[b].d || '9') > (st.s[a].d || '9') ? 1 : -1));
+}
+function dueDate(n) { const x = st.s[n]; return x.l ? addDays(x.l, x.iv || 1) : null; }
+function oldPool() {
+  const rec = new Set(recentList());
+  return SUR.filter(s => isDone(s.n) && !rec.has(s.n)).map(s => s.n);
+}
+function score(n, t) {
+  const x = st.s[n];
+  const over = x.l ? (dnum(t) - dnum(x.l)) / (x.iv || 1) : 99;
+  return over + (x.w ? 1 : 0);
+}
+function pickOld(t, exclude) {
+  const ex = new Set(exclude || []);
+  const cands = oldPool().filter(n => !ex.has(n)).sort((a, b) => score(b, t) - score(a, t));
+  const due = cands.filter(n => { const d = dueDate(n); return !d || d <= t; });
+  const out = []; let pages = 0;
+  for (const n of due) { if (pages >= st.settings.revisePages && out.length) break; out.push(n); pages += sur(n).pages; }
+  return out;
+}
+function plan() {
+  const t = today();
+  if (!st.plan || st.plan.date !== t) st.plan = { date: t, old: pickOld(t) };
+  st.plan.old = st.plan.old.filter(n => isDone(n));
+  return st.plan;
+}
+
+/* ---------- Annulation ---------- */
+let undoSnap = null, toastTimer = null;
+function act(msg, fn) {
+  undoSnap = JSON.stringify(st);
+  fn();
+  persist(); render();
+  const el = document.getElementById('toast');
+  document.getElementById('toast-t').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 5000);
+}
+document.getElementById('toast-undo').addEventListener('click', () => {
+  if (!undoSnap) return;
+  st = normalize(JSON.parse(undoSnap)); undoSnap = null;
+  persist(); render();
+  document.getElementById('toast').classList.remove('show');
+});
+
+/* ---------- Actions ---------- */
+function learnVerses(n, k) {
+  const s = sur(n), x = S(n), from = learned(n) + 1;
+  k = Math.max(1, Math.min(k, s.v - learned(n)));
+  act('Versets ' + from + '–' + (from + k - 1) + ' de ' + s.name + ' enregistrés', () => {
+    x.k = learned(n) + k; L(today()).l += k;
+    if (x.k >= s.v) { x.d = today(); x.l = today(); x.iv = 3; st.current = nextAfter(n); }
+  });
+}
+function markRecent(n) {
+  const x = S(n), t = today();
+  if (x.l === t && x.rt === t) {
+    act(sur(n).name + ' : révision retirée', () => { x.l = x.pl || null; delete x.rt; L(t).r = Math.max(0, L(t).r - 1); });
+  } else {
+    act(sur(n).name + ' révisée', () => { x.pl = x.l || null; x.l = t; x.rt = t; L(t).r += 1; });
+  }
+}
+function grade(n, g) {
+  const x = S(n), t = today(), iv = x.iv || 3, max = st.settings.maxIv;
+  const already = x.gt === t;
+  act(sur(n).name + ' : ' + ({ 3: 'solide', 2: 'hésitante', 1: 'à reprendre' })[g], () => {
+    if (!already) { x.piv = iv; x.pl = x.l || null; L(t).r += 1; }
+    const base = already ? (x.piv || 3) : iv;
+    if (g === 3) { x.iv = Math.min(max, Math.max(2, Math.round(base * 2))); x.w = false; }
+    else if (g === 2) { x.iv = Math.min(max, Math.max(1, Math.round(base * 1.2))); x.w = true; }
+    else { x.iv = 1; x.w = true; }
+    x.g = g; x.gt = t; x.l = t;
+  });
+}
+function readPages(k) {
+  const from = st.read.page;
+  act('Pages ' + from + '–' + Math.min(PAGES, from + k - 1) + ' lues', () => {
+    st.read.page += k; L(today()).t += k;
+    while (st.read.page > PAGES) { st.read.page -= PAGES; st.read.khatm += 1; }
+  });
+}
+function markKnown(list, msg) {
+  act(msg, () => {
+    const old = addDays(today(), -(st.settings.recentDays + 1));
+    for (const n of list) { const x = S(n); x.k = sur(n).v; x.d = old; x.iv = 7; delete x.l; }
+    st.plan = null;
+  });
+}
+
+/* ---------- Rendu ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const pg = p => p < 1 ? '< 1 p.' : '≈ ' + (Math.round(p * 2) / 2).toLocaleString('fr-FR') + ' p.';
+const title = s => esc(s.name) + '<span class="ar" lang="ar">' + s.ar + '</span>';
+
+function streak() {
+  let d = today(), k = 0;
+  const has = x => { const e = st.log[x]; return e && (e.l || e.r || e.t); };
+  if (!has(d)) d = addDays(d, -1);
+  while (has(d)) { k++; d = addDays(d, -1); }
+  return k;
+}
+
+function renderToday() {
+  const t = today(), lg = st.log[t] || { l: 0, r: 0, t: 0 }, cfg = st.settings;
+  const cur = currentSurah(), p = plan(), rec = recentList();
+  const anyKnown = Object.keys(st.s).some(n => learned(+n) > 0);
+  let tasks = 0, done = 0, html = '';
+
+  // Apprendre
+  if (cur) {
+    const s = sur(cur), have = learned(cur), from = have + 1, goal = Math.min(cfg.newVerses, s.v - have), to = have + goal;
+    const learnedToday = lg.l > 0;
+    tasks++; if (learnedToday) done++;
+    const tomorrowFrom = to + 1, tomorrowTo = Math.min(s.v, to + cfg.newVerses);
+    html += '<article class="card' + (learnedToday ? ' done' : '') + '">' +
+      '<div class="card-h"><div><div class="eyebrow">Apprendre <span class="ar" lang="ar">سبق</span></div>' +
+      '<h2>' + title(s) + '</h2><p class="sub">Sourate ' + s.n + ' · juz ' + s.juz + ' · page ' + s.page + ' · ' + s.v + ' versets</p></div>' +
+      (learnedToday ? '<span class="chip ok">+' + lg.l + ' versets aujourd\'hui</span>' : '<span class="chip">' + goal + ' versets</span>') + '</div>' +
+      '<div class="verse-range"><span>Versets</span><b>' + from + '</b><span>à</span><b>' + to + '</b></div>' +
+      '<div class="bar"><i style="width:' + (have / s.v * 100).toFixed(1) + '%"></i></div>' +
+      '<p class="sub">' + have + ' / ' + s.v + ' versets déjà mémorisés' + (tomorrowFrom <= s.v ? '. Ce soir, lis ou écoute les versets ' + tomorrowFrom + ' à ' + tomorrowTo + ' pour préparer demain.' : '. Ce sont les derniers versets de la sourate.') + '</p>' +
+      '<div class="row-actions"><div class="stepper"><button type="button" data-act="step" data-d="-1" aria-label="Un verset de moins">−</button>' +
+      '<input id="learn-k" type="number" inputmode="numeric" min="1" max="' + (s.v - have) + '" value="' + goal + '" aria-label="Versets appris"><button type="button" data-act="step" data-d="1" aria-label="Un verset de plus">+</button></div>' +
+      '<button class="btn primary" type="button" data-act="learn" data-n="' + cur + '">J\'ai appris ces versets</button></div></article>';
+  } else {
+    html += '<article class="card done"><div class="eyebrow">Apprendre <span class="ar" lang="ar">سبق</span></div><h2>Tout le Coran est mémorisé. Mabrouk !</h2><p class="sub">Continue la révision chaque jour pour le garder.</p></article>';
+  }
+
+  if (!anyKnown) {
+    html += '<article class="card quick"><h2>Tu connais déjà des sourates ?</h2><p class="sub">Indique-les pour qu\'elles entrent dans ta révision. Tu peux tout ajuster ensuite dans l\'onglet Sourates.</p>' +
+      '<div class="row-actions"><button class="btn small" data-act="known" data-set="fatiha">Al-Fâtiha</button>' +
+      '<button class="btn small" data-act="known" data-set="last10">Al-Fâtiha et les 10 dernières</button>' +
+      '<button class="btn small" data-act="known" data-set="amma">Al-Fâtiha et tout le juz ʿAmma</button>' +
+      '<a class="btn small ghost" href="#sourates">Choisir dans la liste</a></div></article>';
+  }
+
+  // Réviser le récent
+  if (rec.length) {
+    const nDone = rec.filter(n => st.s[n].l === t).length;
+    tasks++; if (nDone === rec.length) done++;
+    html += '<article class="card' + (nDone === rec.length ? ' done' : '') + '"><div class="card-h"><div><div class="eyebrow">Réviser le récent <span class="ar" lang="ar">سبقي</span></div>' +
+      '<h2>Ce que tu as appris ces ' + cfg.recentDays + ' derniers jours</h2></div><span class="chip' + (nDone === rec.length ? ' ok' : '') + '">' + nDone + ' / ' + rec.length + '</span></div><div class="list">' +
+      rec.map(n => {
+        const s = sur(n), x = st.s[n], ok = x.l === t, part = !isDone(n);
+        const info = part ? 'Versets 1 à ' + x.k + ' (en cours)' : 'Terminée ' + rel(x.d) + ' · ' + pg(s.pages);
+        return '<div class="item' + (ok ? ' is-done' : '') + '"><span class="n">' + n + '</span><div class="t"><strong>' + esc(s.name) + '</strong><span class="ar" lang="ar">' + s.ar + '</span><span class="sub">' + info + '</span></div>' +
+          '<button class="check" type="button" data-act="rec" data-n="' + n + '" aria-pressed="' + ok + '" aria-label="' + esc(s.name) + ' révisée">✓</button></div>';
+      }).join('') + '</div></article>';
+  }
+
+  // Réviser l'ancien
+  const pool = oldPool();
+  if (pool.length) {
+    const items = p.old, rated = items.filter(n => st.s[n].gt === t).length;
+    const pages = items.reduce((a, n) => a + sur(n).pages, 0);
+    if (items.length) { tasks++; if (rated === items.length) done++; }
+    html += '<article class="card' + (items.length && rated === items.length ? ' done' : '') + '"><div class="card-h"><div><div class="eyebrow">Réviser l\'ancien <span class="ar" lang="ar">منزل</span></div>' +
+      '<h2>' + (items.length ? 'Les sourates qui arrivent à échéance' : 'Ta révision est à jour') + '</h2>' +
+      '<p class="sub">' + (items.length ? pg(pages) + ' sur un objectif de ' + cfg.revisePages + ' pages. Récite de mémoire, puis dis comment ça s\'est passé.' : 'Aucune sourate ancienne n\'est due aujourd\'hui.') + '</p></div>' +
+      (items.length ? '<span class="chip' + (rated === items.length ? ' ok' : '') + '">' + rated + ' / ' + items.length + '</span>' : '') + '</div>' +
+      (items.length ? '<div class="list">' + items.map(n => {
+        const s = sur(n), x = st.s[n], g = x.gt === t ? x.g : 0;
+        const info = x.gt === t ? 'Prochaine révision ' + rel(dueDate(n)) : x.l ? 'Dernière révision ' + rel(x.l) : 'Pas encore révisée ici';
+        return '<div class="item rate' + (g ? ' is-done' : '') + '"><span class="n">' + n + '</span><div class="t"><strong>' + esc(s.name) + '</strong><span class="ar" lang="ar">' + s.ar + '</span>' +
+          '<span class="sub">' + pg(s.pages) + ' · ' + info + (x.w && !g ? ' · <span style="color:var(--warn)">à renforcer</span>' : '') + '</span></div>' +
+          '<div class="grades">' + [[3, 'Solide'], [2, 'Hésitante'], [1, 'Oubliée']].map(([v, l]) => '<button class="btn small" type="button" data-act="grade" data-n="' + n + '" data-g="' + v + '" aria-pressed="' + (g === v) + '">' + l + '</button>').join('') + '</div></div>';
+      }).join('') + '</div>' : '') +
+      '<div class="row-actions"><button class="btn small ghost" type="button" data-act="more">Ajouter une sourate à réviser</button></div></article>';
+  }
+
+  // Lire
+  const r = st.read, rp = cfg.readPages, end = Math.min(PAGES, r.page + rp - 1);
+  const names = []; for (let q = r.page; q <= end; q++) { const s = surahAtPage(q); if (!names.includes(s)) names.push(s); }
+  const readToday = lg.t > 0;
+  tasks++; if (readToday) done++;
+  html += '<article class="card' + (readToday ? ' done' : '') + '"><div class="card-h"><div><div class="eyebrow">Lire <span class="ar" lang="ar">ورد</span></div>' +
+    '<h2>Pages ' + r.page + ' à ' + end + '</h2><p class="sub">' + names.map(s => esc(s.name)).join(', ') + ' · juz ' + juzOfPage(r.page) + '</p></div>' +
+    (readToday ? '<span class="chip ok">' + lg.t + ' p. lues</span>' : '<span class="chip">' + rp + ' pages</span>') + '</div>' +
+    '<div class="bar gold"><i style="width:' + ((r.page - 1) / PAGES * 100).toFixed(1) + '%"></i></div>' +
+    '<p class="sub">Lecture complète n° ' + (r.khatm + 1) + ' · ' + (r.page - 1) + ' / 604 pages' + (r.khatm ? ' · ' + r.khatm + ' khatma terminée' + (r.khatm > 1 ? 's' : '') : '') + ' · à ce rythme, fin dans ' + Math.ceil((PAGES - r.page + 1) / rp) + ' jours</p>' +
+    '<div class="row-actions"><button class="btn primary" type="button" data-act="read" data-k="' + rp + '">J\'ai lu ces ' + rp + ' pages</button>' +
+    '<button class="btn small ghost" type="button" data-act="read" data-k="1">+1 page</button></div></article>';
+
+  const bar = '<div class="daybar"><span class="lbl">' + (done === tasks ? 'Programme du jour terminé' : done + ' / ' + tasks + ' tâches faites') + '</span>' +
+    '<div class="meter"><i style="width:' + (tasks ? done / tasks * 100 : 0) + '%"></i></div><span class="streak">' + streak() + ' jour' + (streak() > 1 ? 's' : '') + ' d\'affilée</span></div>';
+  document.getElementById('v-today').innerHTML = bar + html;
+}
+
+let filter = 'all', openN = null;
+function statusOf(n) {
+  const k = learned(n), x = st.s[n];
+  if (k >= sur(n).v) return x && x.w ? 'weak' : 'done';
+  return k > 0 || st.current === n ? 'part' : 'todo';
+}
+function renderSurahs() {
+  const q = fold(document.getElementById('q').value.trim()), t = today(), cur = currentSurah();
+  const rows = SUR.filter(s => {
+    if (q && !(s.key.includes(q) || String(s.n) === q || s.ar.includes(q))) return false;
+    const stt = statusOf(s.n);
+    if (filter === 'all') return true;
+    if (filter === 'done') return stt === 'done' || stt === 'weak';
+    return stt === filter;
+  });
+  document.getElementById('surah-list').innerHTML = rows.length ? rows.map(s => {
+    const k = learned(s.n), x = st.s[s.n] || {}, stt = statusOf(s.n);
+    const chip = { done: '<span class="chip ok">Mémorisée</span>', weak: '<span class="chip warn">À renforcer</span>', part: '<span class="chip gold">' + (s.n === cur ? 'En cours · ' : '') + k + '/' + s.v + '</span>', todo: '<span class="chip">À apprendre</span>' }[stt];
+    const due = isDone(s.n) && x.l ? 'Dernière révision ' + rel(x.l) + ' · prochaine ' + rel(dueDate(s.n)) : (isDone(s.n) ? 'Pas encore révisée ici' : '');
+    return '<details data-n="' + s.n + '"' + (openN === s.n ? ' open' : '') + '><summary><span class="item"><span class="n">' + s.n + '</span></span>' +
+      '<span class="meta"><span class="line1"><strong>' + esc(s.name) + '</strong><span class="ar" lang="ar">' + s.ar + '</span></span>' +
+      '<span class="sub">' + s.v + ' versets · juz ' + s.juz + ' · p. ' + s.page + ' · ' + pg(s.pages) + '</span>' +
+      (k ? '<span class="bar' + (isDone(s.n) ? '' : ' gold') + '"><i style="width:' + (k / s.v * 100).toFixed(1) + '%"></i></span>' : '') + '</span>' + chip + '</summary>' +
+      '<div class="editor">' + (due ? '<p class="sub">' + due + '</p>' : '') +
+      '<label>Versets mémorisés <span class="stepper"><button type="button" data-act="estep" data-d="-1" aria-label="Moins">−</button><input type="number" id="ek-' + s.n + '" min="0" max="' + s.v + '" value="' + k + '" inputmode="numeric" aria-label="Versets mémorisés"><button type="button" data-act="estep" data-d="1" aria-label="Plus">+</button></span> / ' + s.v +
+      ' <button class="btn small" type="button" data-act="eset" data-n="' + s.n + '">Enregistrer</button></label>' +
+      '<div class="row-actions">' +
+      (!isDone(s.n) ? '<button class="btn small" type="button" data-act="known1" data-n="' + s.n + '">Je la connais déjà</button><button class="btn small" type="button" data-act="fin" data-n="' + s.n + '">Je viens de la terminer</button>' : '') +
+      (!isDone(s.n) && s.n !== cur ? '<button class="btn small" type="button" data-act="cur" data-n="' + s.n + '">L\'apprendre maintenant</button>' : '') +
+      (isDone(s.n) ? '<button class="btn small" type="button" data-act="weak" data-n="' + s.n + '" aria-pressed="' + !!x.w + '">À renforcer</button>' : '') +
+      (k ? '<button class="btn small ghost" type="button" data-act="zero" data-n="' + s.n + '">Remettre à zéro</button>' : '') +
+      '</div></div></details>';
+  }).join('') : '<p class="empty" style="padding:14px">Aucune sourate ne correspond.</p>';
+}
+
+function renderStats() {
+  const t = today();
+  let vers = 0, pages = 0, nDone = 0, weak = [];
+  for (const s of SUR) { const k = learned(s.n); vers += k; pages += s.pages * k / s.v; if (k >= s.v) { nDone++; if (st.s[s.n].w) weak.push(s); } }
+  const pct = x => (x * 100).toFixed(x < .1 ? 1 : 0).replace('.', ',') + ' %';
+  const juz = []; for (let j = 1; j <= 30; j++) {
+    const a = juzStart(j), b = juzEnd(j); let m = 0;
+    for (const s of SUR) { const k = learned(s.n); if (!k) continue; const e = s.pos + s.pages * k / s.v; m += Math.max(0, Math.min(b, e) - Math.max(a, s.pos)); }
+    juz.push(m / (b - a));
+  }
+  const fullJuz = juz.filter(x => x > .995).length;
+  // Carte d'activité : 18 semaines, du lundi au dimanche
+  const now = new Date(), dow = (now.getDay() + 6) % 7, start = addDays(t, -dow - 17 * 7);
+  let cells = '';
+  for (let i = 0; i < 18 * 7; i++) {
+    const d = addDays(start, i), e = st.log[d];
+    if (d > t) { cells += '<i class="future"></i>'; continue; }
+    const l = e ? (e.l > 0) + (e.r > 0) + (e.t > 0) : 0;
+    cells += '<i data-l="' + l + '" title="' + fmtDate(d) + (l ? ' · ' + l + '/3' : '') + '"></i>';
+  }
+  const first = Object.keys(st.log).sort()[0] || t, span = Math.max(1, Math.min(30, dnum(t) - dnum(first) + 1));
+  const last30 = Array.from({ length: 30 }, (_, i) => st.log[addDays(t, -i)] || { l: 0, r: 0, t: 0 });
+  const v30 = last30.reduce((a, e) => a + e.l, 0), r30 = last30.reduce((a, e) => a + e.r, 0), t30 = last30.reduce((a, e) => a + e.t, 0);
+  const remaining = TOTAL_V - vers, perDay = v30 / span;
+  const eta = span >= 7 && remaining && perDay > 0 ? Math.round(remaining / perDay) : null;
+
+  document.getElementById('v-stats').innerHTML =
+    '<div class="stats">' +
+    '<div class="stat"><b>' + nDone + '</b><span>sourates sur 114</span><div class="bar"><i style="width:' + (nDone / 114 * 100) + '%"></i></div></div>' +
+    '<div class="stat"><b>' + vers.toLocaleString('fr-FR') + '</b><span>versets sur 6 236 · ' + pct(vers / TOTAL_V) + '</span><div class="bar"><i style="width:' + (vers / TOTAL_V * 100) + '%"></i></div></div>' +
+    '<div class="stat"><b>' + Math.round(pages) + '</b><span>pages sur 604 (≈)</span><div class="bar"><i style="width:' + (pages / PAGES * 100) + '%"></i></div></div>' +
+    '<div class="stat"><b>' + fullJuz + '</b><span>juz complets sur 30</span><div class="bar"><i style="width:' + (fullJuz / 30 * 100) + '%"></i></div></div></div>' +
+    '<article class="card"><div class="eyebrow">Les 30 juz <span class="ar" lang="ar">الأجزاء</span></div><div class="juz">' +
+    juz.map((x, i) => '<div class="' + (x > .995 ? 'full' : '') + '" title="Juz ' + (i + 1) + ' · ' + Math.round(x * 100) + ' %">' + (x > .995 ? '' : '<i style="height:' + (x * 100).toFixed(0) + '%"></i>') + '<span>' + (i + 1) + '</span></div>').join('') +
+    '</div><p class="sub">Le remplissage montre la part de chaque juz que tu as mémorisée.</p></article>' +
+    '<article class="card"><div class="card-h"><div><div class="eyebrow">Régularité</div><h2>' + streak() + ' jour' + (streak() > 1 ? 's' : '') + ' d\'affilée</h2></div></div>' +
+    '<div class="heat-wrap"><div class="heat">' + cells + '</div></div>' +
+    '<div class="legend">Tâches faites dans la journée (apprendre, réviser, lire) : <i></i>0 <i style="background:color-mix(in srgb,var(--accent) 35%,var(--surface-2))"></i>1 <i style="background:color-mix(in srgb,var(--accent) 65%,var(--surface-2))"></i>2 <i style="background:var(--accent)"></i>3</div>' +
+    '<p class="sub">Sur 30 jours : ' + v30 + ' versets appris, ' + r30 + ' révisions, ' + t30 + ' pages lues.' + (eta ? ' À ce rythme, il te reste environ ' + (eta > 730 ? Math.round(eta / 365) + ' ans' : eta > 60 ? Math.round(eta / 30) + ' mois' : eta + ' jours') + ' pour terminer le Coran.' : '') + '</p></article>' +
+    (weak.length ? '<article class="card"><div class="eyebrow">À renforcer</div><div class="list">' + weak.map(s => '<div class="item"><span class="n">' + s.n + '</span><div class="t"><strong>' + esc(s.name) + '</strong><span class="ar" lang="ar">' + s.ar + '</span><span class="sub">Prochaine révision ' + rel(dueDate(s.n) || t) + '</span></div><span></span></div>').join('') + '</div></article>' : '');
+}
+
+function renderSettings() {
+  if (document.getElementById('v-settings').childElementCount) { syncSettings(); return; }
+  const f = (id, label, help, min, max) => '<div class="field"><label for="' + id + '"><strong>' + label + '</strong></label><div class="stepper"><button type="button" data-act="sstep" data-d="-1" aria-label="Moins">−</button><input id="' + id + '" data-key="' + id.slice(4) + '" type="number" min="' + min + '" max="' + max + '" inputmode="numeric"><button type="button" data-act="sstep" data-d="1" aria-label="Plus">+</button></div><p class="sub">' + help + '</p></div>';
+  document.getElementById('v-settings').innerHTML =
+    '<article class="card"><div class="eyebrow">Mon rythme</div><div class="form">' +
+    f('set-newVerses', 'Nouveaux versets par jour', 'Ce que tu apprends chaque jour. Pour les longues sourates, 3 à 5 versets suffisent souvent.', 1, 50) +
+    f('set-revisePages', 'Pages de révision ancienne par jour', 'Le volume de sourates anciennes proposé chaque jour.', 1, 60) +
+    f('set-readPages', 'Pages de lecture par jour', '20 pages par jour = une lecture complète par mois.', 1, 60) +
+    f('set-recentDays', 'Durée de la révision récente (jours)', 'Une sourate terminée est révisée chaque jour pendant cette durée, puis passe en révision ancienne.', 3, 120) +
+    f('set-maxIv', 'Écart maximum entre deux révisions (jours)', 'Même une sourate solide revient au moins à cette fréquence.', 3, 120) +
+    '<div class="field"><label for="set-order"><strong>Ordre d\'apprentissage</strong></label><select id="set-order" data-key="order">' +
+    '<option value="amma">Al-Fâtiha, puis juz ʿAmma (An-Nâs → An-Nabaʾ), puis Al-Baqara →</option>' +
+    '<option value="desc">De An-Nâs vers Al-Fâtiha</option><option value="asc">De Al-Fâtiha vers An-Nâs</option></select>' +
+    '<p class="sub">Tu peux aussi choisir n\'importe quelle sourate dans l\'onglet Sourates avec « L\'apprendre maintenant ».</p></div>' +
+    '<div class="field"><label for="set-page"><strong>Page actuelle de lecture</strong></label><div class="stepper"><button type="button" data-act="pstep" data-d="-1" aria-label="Moins">−</button><input id="set-page" type="number" min="1" max="604" inputmode="numeric"><button type="button" data-act="pstep" data-d="1" aria-label="Plus">+</button></div><p class="sub">Pour reprendre ta lecture là où tu en es dans ton mushaf.</p></div>' +
+    '</div></article>' +
+    '<article class="card"><div class="eyebrow">Sauvegarde</div><p class="sub">Garde une copie de ta progression (par exemple dans tes notes), ou colle une sauvegarde ici pour la restaurer.</p>' +
+    '<div class="row-actions"><button class="btn small" type="button" data-act="export">Copier ma sauvegarde</button><button class="btn small" type="button" data-act="import">Restaurer depuis le texte collé</button></div>' +
+    '<textarea id="backup" aria-label="Texte de sauvegarde" placeholder="Colle ta sauvegarde ici"></textarea>' +
+    '<div class="row-actions"><button class="btn small danger" type="button" data-act="reset" id="reset-btn">Tout effacer</button></div></article>';
+  syncSettings();
+}
+function syncSettings() {
+  for (const el of document.querySelectorAll('#v-settings [data-key]')) if (document.activeElement !== el) el.value = st.settings[el.dataset.key];
+  const p = document.getElementById('set-page'); if (p && document.activeElement !== p) p.value = st.read.page;
+}
+
+function renderDates() {
+  const d = new Date();
+  document.getElementById('date-g').textContent = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  try { document.getElementById('date-h').textContent = new Intl.DateTimeFormat('fr-FR-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(d).replace(/\s?(AH|ap\. ?J\.-C\.|ère.*)$/i, '') + ' H'; } catch (e) {}
+}
+
+const VIEWS = ['aujourdhui', 'sourates', 'progression', 'reglages'];
+let view = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'aujourdhui';
+function render() {
+  renderDates();
+  for (const v of VIEWS) document.querySelector('[data-view="' + v + '"]').hidden = v !== view;
+  for (const a of document.querySelectorAll('[data-tab]')) { if (a.dataset.tab === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }
+  if (view === 'aujourdhui') renderToday();
+  else if (view === 'sourates') renderSurahs();
+  else if (view === 'progression') renderStats();
+  else renderSettings();
+}
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (VIEWS.includes(h)) { view = h; render(); window.scrollTo(0, 0); } });
+document.querySelector('nav.tabs').addEventListener('click', e => { const a = e.target.closest('[data-tab]'); if (a && a.dataset.tab === view) { e.preventDefault(); render(); } });
+
+/* ---------- Événements ---------- */
+const clampInput = (inp, d) => { const v = (parseInt(inp.value, 10) || 0) + d; inp.value = Math.max(+inp.min, Math.min(+inp.max, v)); return +inp.value; };
+let resetArmed = null;
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act, n = +b.dataset.n;
+  if (a === 'step' || a === 'estep') { e.preventDefault(); clampInput(b.parentElement.querySelector('input'), +b.dataset.d); return; }
+  if (a === 'learn') { const k = parseInt(document.getElementById('learn-k').value, 10); if (k > 0) learnVerses(n, k); return; }
+  if (a === 'rec') return markRecent(n);
+  if (a === 'grade') return grade(n, +b.dataset.g);
+  if (a === 'read') return readPages(+b.dataset.k);
+  if (a === 'more') {
+    const p = plan(), extra = oldPool().filter(x => !p.old.includes(x)).sort((x, y) => score(y, today()) - score(x, today()))[0];
+    if (extra) act(sur(extra).name + ' ajoutée à la révision', () => { p.old.push(extra); });
+    return;
+  }
+  if (a === 'known') {
+    const set = b.dataset.set, list = [1];
+    if (set === 'last10') for (let i = 105; i <= 114; i++) list.push(i);
+    if (set === 'amma') for (let i = 78; i <= 114; i++) list.push(i);
+    return markKnown(list, list.length + ' sourate' + (list.length > 1 ? 's' : '') + ' ajoutée' + (list.length > 1 ? 's' : '') + ' à ta révision');
+  }
+  if (a === 'eset') {
+    const k = Math.max(0, Math.min(sur(n).v, parseInt(document.getElementById('ek-' + n).value, 10) || 0));
+    return act(sur(n).name + ' : ' + k + ' versets mémorisés', () => {
+      const x = S(n), was = isDone(n); x.k = k;
+      if (k >= sur(n).v && !was) { x.d = today(); x.l = today(); x.iv = 3; if (st.current === n) st.current = null; }
+      if (k < sur(n).v) { delete x.d; }
+      st.plan = null;
+    });
+  }
+  if (a === 'known1') return markKnown([n], sur(n).name + ' ajoutée à la révision ancienne');
+  if (a === 'fin') return act(sur(n).name + ' terminée', () => { const x = S(n); x.k = sur(n).v; x.d = today(); x.l = today(); x.iv = 3; if (st.current === n) st.current = null; st.plan = null; });
+  if (a === 'cur') return act(sur(n).name + ' devient la sourate en cours', () => { st.current = n; });
+  if (a === 'weak') return act(sur(n).name + (st.s[n].w ? ' n\'est plus à renforcer' : ' à renforcer'), () => { const x = S(n); x.w = !x.w; if (x.w) x.iv = 1; });
+  if (a === 'zero') return act(sur(n).name + ' remise à zéro', () => { delete st.s[n]; st.plan = null; });
+  if (a === 'sstep') { const inp = b.parentElement.querySelector('input'); clampInput(inp, +b.dataset.d); inp.dispatchEvent(new Event('change', { bubbles: true })); return; }
+  if (a === 'pstep') { const inp = document.getElementById('set-page'); clampInput(inp, +b.dataset.d); inp.dispatchEvent(new Event('change', { bubbles: true })); return; }
+  if (a === 'export') {
+    const txt = JSON.stringify(st), ta = document.getElementById('backup');
+    ta.value = txt;
+    const fallback = () => { ta.focus(); ta.select(); setSync('Sauvegarde affichée : sélectionne-la et copie-la'); };
+    try { navigator.clipboard.writeText(txt).then(() => setSync('Sauvegarde copiée dans le presse-papiers'), fallback); } catch (err) { fallback(); }
+    return;
+  }
+  if (a === 'import') {
+    try {
+      const o = JSON.parse(document.getElementById('backup').value);
+      if (!o || typeof o.s !== 'object') throw 0;
+      act('Sauvegarde restaurée', () => { st = normalize(o); });
+    } catch (err) { setSync('Ce texte n\'est pas une sauvegarde valide du Carnet de Hifz.'); }
+    return;
+  }
+  if (a === 'reset') {
+    if (!resetArmed) { b.classList.add('armed'); b.textContent = 'Confirmer : tout effacer'; resetArmed = setTimeout(() => { b.classList.remove('armed'); b.textContent = 'Tout effacer'; resetArmed = null; }, 4000); return; }
+    clearTimeout(resetArmed); resetArmed = null; b.classList.remove('armed'); b.textContent = 'Tout effacer';
+    return act('Progression effacée', () => { const keep = st.settings; st = fresh(); st.settings = keep; });
+  }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id === 'set-page') { const p = Math.max(1, Math.min(PAGES, parseInt(el.value, 10) || 1)); st.read.page = p; persist(); return; }
+  if (el.dataset && el.dataset.key && el.closest('#v-settings')) {
+    const k = el.dataset.key;
+    st.settings[k] = k === 'order' ? el.value : Math.max(+el.min, Math.min(+el.max, parseInt(el.value, 10) || DEFAULTS[k]));
+    if (k === 'order' && !learned(st.current)) st.current = null;
+    if (k === 'revisePages' || k === 'recentDays') st.plan = null;
+    persist(); syncSettings();
+  }
+});
+document.addEventListener('toggle', e => {
+  const d = e.target; if (!(d instanceof HTMLDetailsElement)) return;
+  if (d.open) openN = +d.dataset.n; else if (openN === +d.dataset.n) openN = null;
+}, true);
+document.getElementById('q').addEventListener('input', renderSurahs);
+document.getElementById('seg').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if (!b) return;
+  filter = b.dataset.f;
+  for (const x of document.querySelectorAll('#seg [data-f]')) x.setAttribute('aria-pressed', x === b);
+  renderSurahs();
+});
+// Changement de jour pendant que la page est ouverte
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+
+render();
+connect();
+})();
+</script>

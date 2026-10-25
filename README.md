@@ -71,3 +71,13 @@ version-monofichier.html   Le site entier en un seul fichier
 
 Le formulaire de contact ouvre la messagerie de la visiteuse avec un message prérempli :
 aucun serveur n'est nécessaire, le site s'héberge sur n'importe quel hébergement statique.
+
+## Carnet de Hifz (`coran/`)
+
+`coran/index.html` est une page indépendante pour suivre la mémorisation du Coran : chaque
+jour elle propose les versets à **apprendre** (سبق), les sourates récentes à **réviser**
+(سبقي), les sourates anciennes arrivées à échéance (منزل, répétition espacée selon
+« Solide / Hésitante / Oubliée ») et les pages à **lire** (ورد). Les onglets Sourates,
+Progression (30 juz, régularité) et Réglages (rythme, ordre, sauvegarde) complètent le tout.
+La progression est enregistrée dans le navigateur ; ouvrir le fichier suffit, ou
+<http://127.0.0.1:5180/coran/> avec `python3 serve.py 5180`.
